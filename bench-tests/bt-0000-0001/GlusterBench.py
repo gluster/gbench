@@ -22,8 +22,18 @@ def main():
             files = a
         elif o in ("-n", "--sample-size"):
             sample_size = a
+        elif o in ("-t", "--threads"):
+            thread_count = a
+        elif o in ("-m", "--mount-point"):
+            mount_point = a
         else:
             assert False, "unhandled option"
+
+    # Use default of 4 for thread count
+    try:
+        thread_count
+    except NameError:
+        thread_count = 4
 
     # Get hostnames
     try:
@@ -41,15 +51,30 @@ def main():
     if os.path.isfile("/root/clients.ioz"):
         pass
     else:
-        print "The iozone config file must be stored in /root/clients.ioz.  It also must have 4 threads per client."
-        sys.exit(1)
+        print "The iozone config file must be stored in /root/clients.ioz.  It also must have the same number of threads as defined with the -t --threads flag.  If -t is not defined it will use the you the default of 4 threads per client."
+        config_iozone = input("Would you like to configure the IOZone config file?  Y/N")
+        if config_iozone == "Y":
+            print "Configuring IOZone config file -> /root/clients.ioz"
+            print "The number of threads per client is " + str(thread_count)
+            ioz_file = open("/root/clients.ioz", "w+")
+            for client in clients:
+                for line in range(1, thread_count)
+                    ioz_file.write(client + " " + mount_point + " " + "/usr/bin/iozone\n"
+        else:
+            sys.exit(1)
 
     # Check for smallfile
     if os.path.isfile("/root/smallfile/smallfile_cli.py"):
         pass
     else:
         print "The smallfile application must be installed in /root/smallfile."
-        sys.exit(1)
+        config_smallfile = input("Would you like to configure smallfile?  NOTE: Git must be installed. Y/N")
+        if config_smallfile == "Y"
+            print "Git cloning the smallfile application in /root/smallfile/"
+            for client in clients:
+                run_command("ssh root@" + client " git clone https://github.com/bengland2/smallfile.git"
+        else
+            sys.exit(1)
 
     number_threads = 0
     client_list = ""
@@ -175,7 +200,7 @@ def extract_iozone_result(logfn):
         if l.__contains__('Children see throughput'):
             tokens = l.split()
             tokenct = len(tokens)
-            assert tokens[tokenct-1] == 'KB/sec'  # line ends with 'KB/sec'
+            assert str(tokens[tokenct-1]).upper() == 'KB/sec'  # line ends with 'KB/sec'
             result = float(tokens[tokenct-2].strip())
             if not result1: result1 = result
             elif not result2: result2 = result
