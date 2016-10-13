@@ -58,8 +58,8 @@ def main():
             print "The number of threads per client is " + str(thread_count)
             ioz_file = open("/root/clients.ioz", "w+")
             for client in clients:
-                for line in range(1, thread_count)
-                    ioz_file.write(client + " " + mount_point + " " + "/usr/bin/iozone\n"
+                for line in range(1, thread_count):
+                    ioz_file.write(client + " " + mount_point + " " + "/usr/bin/iozone\n")
         else:
             sys.exit(1)
 
@@ -69,11 +69,11 @@ def main():
     else:
         print "The smallfile application must be installed in /root/smallfile."
         config_smallfile = input("Would you like to configure smallfile?  NOTE: Git must be installed. Y/N")
-        if config_smallfile == "Y"
+        if config_smallfile == "Y":
             print "Git cloning the smallfile application in /root/smallfile/"
             for client in clients:
-                run_command("ssh root@" + client " git clone https://github.com/bengland2/smallfile.git"
-        else
+                run_command("ssh root@" + client + " git clone https://github.com/bengland2/smallfile.git")
+        else:
             sys.exit(1)
 
     number_threads = 0
