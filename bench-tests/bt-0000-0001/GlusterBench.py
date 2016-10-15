@@ -130,7 +130,7 @@ def main():
     (result1, result2) = get_samples(["python",
         "/root/smallfile/smallfile_cli.py", "--operation", "create",
         "--threads", "8", "--file-size", str(size), "--files", str(files),
-        "--top", "/gluster-mount", "--host-set", client_list], "y",
+        "--top", "/gluster-mount", "--remote-pgm-dir", "/root/smallfile/", "--host-set", client_list], "y",
         verbose, sample_size)
     print "The results for smallfile creates are: " + str(result1)
     average_smallfile_create = find_average(result1)
@@ -140,7 +140,7 @@ def main():
     (result1, result2) = get_samples(["python",
         "/root/smallfile/smallfile_cli.py", "--operation", "read",
         "--threads", "8", "--file-size", str(size), "--files", str(files),
-        "--top", "/gluster-mount", "--host-set", client_list], "n",
+        "--top", "/gluster-mount", "--remote-pgm-dir", "/root/smallfile/", "--host-set", client_list], "n",
         verbose, sample_size)
     print "The results for smallfile reads are: " + str(result1)
     average_smallfile_read = find_average(result1)
@@ -150,7 +150,7 @@ def main():
     (result1, result2) = get_samples(["python",
         "/root/smallfile/smallfile_cli.py", "--operation", "ls-l",
         "--threads", "8", "--file-size", str(size), "--files", str(files),
-        "--top", "/gluster-mount", "--host-set", client_list], "n",
+        "--top", "/gluster-mount", "--remote-pgm-dir", "/root/smallfile/", "--host-set", client_list], "n",
         verbose, sample_size)
     print "The results for smallfile reads are: " + str(result1)
     average_smallfile_ls = find_average(result1)
@@ -200,7 +200,7 @@ def extract_iozone_result(logfn):
         if l.__contains__('Children see throughput'):
             tokens = l.split()
             tokenct = len(tokens)
-            assert str(tokens[tokenct-1]).upper() == 'KB/sec'  # line ends with 'KB/sec'
+            assert str(tokens[tokenct-1]).upper() == 'KB/SEC'  # line ends with 'KB/sec'
             result = float(tokens[tokenct-2].strip())
             if not result1: result1 = result
             elif not result2: result2 = result
