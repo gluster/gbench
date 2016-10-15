@@ -73,6 +73,11 @@ def main():
             print "Git cloning the smallfile application in /root/smallfile/"
             for client in clients:
                 run_command("ssh root@" + client +" git clone https://github.com/bengland2/smallfile.git")
+        config_smallfile = raw_input("Would you like to configure smallfile?  NOTE: Git must be installed. Y/N")
+        if config_smallfile == "Y" or config_smallfile == "y":
+            print "Git cloning the smallfile application in /root/smallfile/"
+            for client in clients:
+                run_command("ssh root@" + client + " git clone https://github.com/bengland2/smallfile.git")
         else:
             sys.exit(1)
 
