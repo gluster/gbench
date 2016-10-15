@@ -52,14 +52,14 @@ def main():
         pass
     else:
         print "The iozone config file must be stored in /root/clients.ioz.  It also must have the same number of threads as defined with the -t --threads flag.  If -t is not defined it will use the you the default of 4 threads per client."
-        config_iozone = input("Would you like to configure the IOZone config file?  Y/N")
-        if config_iozone == "Y":
+        config_iozone = raw_input("Would you like to configure the IOZone config file?  Y/N")
+        if config_iozone == "Y" or config_iozone == "y":
             print "Configuring IOZone config file -> /root/clients.ioz"
             print "The number of threads per client is " + str(thread_count)
             ioz_file = open("/root/clients.ioz", "w+")
             for client in clients:
-                for line in range(1, thread_count)
-                    ioz_file.write(client + " " + mount_point + " " + "/usr/bin/iozone\n"
+                for line in range(1, thread_count):
+                    ioz_file.write(client + " " + mount_point + " " + "/usr/bin/iozone\n")
         else:
             sys.exit(1)
 
@@ -68,12 +68,12 @@ def main():
         pass
     else:
         print "The smallfile application must be installed in /root/smallfile."
-        config_smallfile = input("Would you like to configure smallfile?  NOTE: Git must be installed. Y/N")
-        if config_smallfile == "Y"
+        config_smallfile = raw_input("Would you like to configure smallfile?  NOTE: Git must be installed. Y/N")
+        if config_smallfile == "Y" or config_smallfile == "y":
             print "Git cloning the smallfile application in /root/smallfile/"
             for client in clients:
-                run_command("ssh root@" + client " git clone https://github.com/bengland2/smallfile.git"
-        else
+                run_command("ssh root@" + client +" git clone https://github.com/bengland2/smallfile.git")
+        else:
             sys.exit(1)
 
     number_threads = 0
@@ -183,7 +183,7 @@ def make_report(size, average_seq_write, average_seq_read, average_rand_write, a
     print "Smallfile ls -l   " + str(size) + "   file size: " + str(average_smallfile_ls)
 
 def run_command(command_in):
-    p = subprocess.Popen(command_in, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    p = subprocess.Popen(command_in, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
     while(True):
         retcode = p.poll() #returns None while subprocess is running
         line = p.stdout.readline()
@@ -271,6 +271,7 @@ def get_samples(command_in, cleanup, verbose, sample_size):
 def find_average(samples_in):
     length_in = len(samples_in)
     total = 0
+    print samples_in
     for x in range(0, length_in):
         total = total + int(samples_in[x])
     average = total / length_in
