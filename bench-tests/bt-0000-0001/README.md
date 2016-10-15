@@ -10,28 +10,28 @@ The tests that are run using smallfile are, create, read, ls -l (listing)
 
 ## Pre-requisites
   - The environment variable CLIENTS must be set and contain a space separated
-    list of IPs or hostnames [1]
+    list of IPs or hostnames [a]
   - The environment variable SERVERS must be set and contain a space separated
-    list of IPs or hostnames [1]
+    list of IPs or hostnames [b]
   - The iozone config file must be stored in /root/clients.ioz.  It also must
-    have 4 threads per client [2]
+    have 4 threads per client [c]
   - The smallfile application must be installed in /root/smallfile. If you have git installed this step will be performed during execution.
-  - Passwordless SSH should be setup across the CLIENTS and SERVERS [3]
+  - Passwordless SSH should be setup across the CLIENTS and SERVERS [d]
   - Provided sync-drop-caches.sh should be copied to /root/sync-drop-caches.sh
   
-[1] To set the env. variable temporarily for the current shell and all the processes started from the current shell:
+[a] To set the env. variable temporarily for the current shell and all the processes started from the current shell:
 
-``` export CLIENTS=your-client-ip-01\ your-client-ip-02 #Spcae seperated list of IPs ```
+``` export CLIENTS=your-client-ip-01\ your-client-ip-02 #Space seperated list of IPs ```
 
-and
+[b] To set the env. variable temporarily for the current shell and all the processes started from the current shell:
 
-``` export SERVERS=your-server-ip-01\ your-server-ip-02  #Spcae seperated list of IPs ```
+``` export SERVERS=your-server-ip-01\ your-server-ip-02  #Space seperated list of IPs ```
   
-[2] The configuration file contains a series of records that look like this: ``` hostname   directory   iozone-pathname ```
+[c] The configuration file contains a series of records that look like this: ``` hostname   directory   iozone-pathname ```
 
-Where hostname is a host name or IP address of a test driver machine that iozone can use, directory is the pathname of a directory to use within that host, and iozone-pathname is the full pathname of the iozone executable to use on that host. Be sure that every target host can resolve the hostname of host where the iozone command was run. All target hosts must permit password-less ssh access from the host running the command.
+Where hostname is a host name or IP address of a test driver machine that iozone can use, directory is the pathname of a directory to use within that host, and iozone-pathname is the full pathname of the iozone executable to use on that host. Each record is a thread in iozone terminology, so as this test by default uses 4 threads, there should be 4 records per client mentioned in the CLIENTS environment variable. Be sure that every target host can resolve the hostname of host where the iozone command was run. All target hosts must permit password-less ssh access from the host running the command.
 
-[3] To check the same, try ``` ssh root@yourclient_ip ```. 
+[d] To check the same, try ``` ssh root@yourclient_ip ```. 
 If you're able to access root@yourclient_ip without the root password, you're all set.
 
 ## Arguments to the test tool
