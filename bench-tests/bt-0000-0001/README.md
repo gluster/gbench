@@ -13,10 +13,8 @@ The tests that are run using smallfile are, create, read, ls -l (listing)
     list of IPs or hostnames [a]
   - The environment variable SERVERS must be set and contain a space separated
     list of IPs or hostnames [b]
-  - The iozone config file must be stored in /root/clients.ioz.  It also must
-    have 4 threads per client [c]
   - The smallfile application must be installed in /root/smallfile. If you have git installed this step will be performed during execution.
-  - Passwordless SSH should be setup across the CLIENTS and SERVERS [d]
+  - Passwordless SSH should be setup across the CLIENTS and SERVERS [c]
   - Provided sync-drop-caches.sh should be copied to /root/sync-drop-caches.sh
   
 [a] To set the env. variable temporarily for the current shell and all the processes started from the current shell:
@@ -27,11 +25,7 @@ The tests that are run using smallfile are, create, read, ls -l (listing)
 
 ``` export SERVERS=your-server-ip-01\ your-server-ip-02  #Space seperated list of IPs ```
   
-[c] The configuration file contains a series of records that look like this: ``` hostname   directory   iozone-pathname ```
-
-Where hostname is a host name or IP address of a test driver machine that iozone can use, directory is the pathname of a directory to use within that host, and iozone-pathname is the full pathname of the iozone executable to use on that host. Each record is a thread in iozone terminology, so as this test by default uses 4 threads, there should be 4 records per client mentioned in the CLIENTS environment variable. Be sure that every target host can resolve the hostname of host where the iozone command was run. All target hosts must permit password-less ssh access from the host running the command.
-
-[d] To check the same, try ``` ssh root@yourclient_ip ```. 
+[c] To check the same, try ``` ssh root@yourclient_ip ```. 
 If you're able to access root@yourclient_ip without the root password, you're all set.
 
 ## Arguments to the test tool
@@ -41,17 +35,18 @@ If you're able to access root@yourclient_ip without the root password, you're al
         Record size for IOZone runs
         File size for the smallfile tests
         The same value is used for both series of tests
-
 -f <files>
         Number of small files to create per smallfile test thread
         (default threads 8)
--n <numnber of samples>
+-n <number of samples>
         This setting runs a test multiple times (i.e collecting as many samples
         as requested), and provides an average across the runs. IOW, it enables
         collecting multiple test data, to avoid any noise in the test reflecting
         in the results.
+-m <mount point>
+        Specifies the location where a gluster volume is mounted.
 
-Example: GlusterBench.py -s 64 -f 10000 -n 5 -v
+Example: GlusterBench.py -s 64 -f 10000 -n 5 -m storage-pool -v
 ```
 
 ## Sample output

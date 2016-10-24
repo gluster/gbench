@@ -10,7 +10,4 @@ run_drop_cache()
     done
 }
 
-source=${BASH_SOURCE[0]}
-    if [ $source == $0 ]; then
         run_drop_cache
-    fi
