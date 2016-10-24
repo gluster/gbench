@@ -2,7 +2,7 @@ import getopt, sys, subprocess, socket, os, time
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "n:s:f:v", ["help", "output="])
+        opts, args = getopt.getopt(sys.argv[1:], "n:s:f:m:v", ["help", "output="])
     except getopt.GetoptError as err:
         # print help information and exit:
         print err # will print something like "option -a not recognized"
@@ -35,9 +35,20 @@ def main():
     except NameError:
         thread_count = 4
 
+    try:
+	size
+	sample_size
+	mount_point
+	files
+    except NameError:
+	print "Incorrect usage"
+	usage()
+        sys.exit(1)
+	
+
     # Get hostnames
     try:
-        clients = os.environ['CLIENTS']
+        clients = os.environ['CLIENTS'].split(" ")
     except KeyError:
         print "The environment variable CLIENTS must be set and contain a space separated list of IPs or hostnames"
         sys.exit(1)
@@ -52,33 +63,25 @@ def main():
         pass
     else:
         print "The iozone config file must be stored in /root/clients.ioz.  It also must have the same number of threads as defined with the -t --threads flag.  If -t is not defined it will use the you the default of 4 threads per client."
-        config_iozone = input("Would you like to configure the IOZone config file?  Y/N")
-        if config_iozone == "Y":
+        config_iozone = raw_input("Would you like to configure the IOZone config file?  Y/N")
+        if config_iozone == 'Y':
             print "Configuring IOZone config file -> /root/clients.ioz"
             print "The number of threads per client is " + str(thread_count)
             ioz_file = open("/root/clients.ioz", "w+")
             for client in clients:
-                for line in range(1, thread_count):
+                for line in range(0, thread_count):
                     ioz_file.write(client + " " + mount_point + " " + "/usr/bin/iozone\n")
         else:
             sys.exit(1)
 
     # Check for smallfile
-    if os.path.isfile("/root/smallfile/smallfile_cli.py"):
-        pass
-    else:
-        print "The smallfile application must be installed in /root/smallfile."
-        config_smallfile = input("Would you like to configure smallfile?  NOTE: Git must be installed. Y/N")
-        if config_smallfile == "Y":
-            print "Git cloning the smallfile application in /root/smallfile/"
-            for client in clients:
-                run_command("ssh root@" + client + " git clone https://github.com/bengland2/smallfile.git")
-        else:
-            sys.exit(1)
+    print "Checking and installing smallfile on all clients"
+    for client in clients:
+        subprocess.call(["ssh", "root@" + client, "sh", "<", "install_smallfile.sh"])
 
     number_threads = 0
     client_list = ""
-    for host in clients.split(" "):
+    for host in clients:
         if number_threads == 0:
             client_list = host
         else:
@@ -130,7 +133,7 @@ def main():
     (result1, result2) = get_samples(["python",
         "/root/smallfile/smallfile_cli.py", "--operation", "create",
         "--threads", "8", "--file-size", str(size), "--files", str(files),
-        "--top", "/gluster-mount", "--remote-pgm-dir", "/root/smallfile/", "--host-set", client_list], "y",
+        "--top", mount_point, "--remote-pgm-dir", "/root/smallfile/", "--host-set", client_list], "y",
         verbose, sample_size)
     print "The results for smallfile creates are: " + str(result1)
     average_smallfile_create = find_average(result1)
@@ -140,7 +143,7 @@ def main():
     (result1, result2) = get_samples(["python",
         "/root/smallfile/smallfile_cli.py", "--operation", "read",
         "--threads", "8", "--file-size", str(size), "--files", str(files),
-        "--top", "/gluster-mount", "--remote-pgm-dir", "/root/smallfile/", "--host-set", client_list], "n",
+        "--top", mount_point, "--remote-pgm-dir", "/root/smallfile/", "--host-set", client_list], "n",
         verbose, sample_size)
     print "The results for smallfile reads are: " + str(result1)
     average_smallfile_read = find_average(result1)
@@ -150,7 +153,7 @@ def main():
     (result1, result2) = get_samples(["python",
         "/root/smallfile/smallfile_cli.py", "--operation", "ls-l",
         "--threads", "8", "--file-size", str(size), "--files", str(files),
-        "--top", "/gluster-mount", "--remote-pgm-dir", "/root/smallfile/", "--host-set", client_list], "n",
+        "--top", mount_point, "--remote-pgm-dir", "/root/smallfile/", "--host-set", client_list], "n",
         verbose, sample_size)
     print "The results for smallfile reads are: " + str(result1)
     average_smallfile_ls = find_average(result1)
@@ -167,10 +170,11 @@ def usage():
     print "Gluster Benchmark Kit Options:"
     print "  -h --help           Print gbench options."
     print "  -v                  Verbose Output."
+    print "  -m                  Mount point."
     print "  -s --size           Record size for large files, file size for small files."
     print "  -f --files          The nuber of files to create for smallfile tests."
     print "  -n --sample-size    The number of samples to collect for each test."
-    print "Example: GlusterBench.py -s 64 -f 10000 -n 5 -v\n"
+    print "Example: GlusterBench.py -s 64 -f 10000 -n 5 -m gluster_mount -v\n"
 
 def make_report(size, average_seq_write, average_seq_read, average_rand_write, average_rand_read, average_smallfile_create, average_smallfile_read, average_smallfile_ls):
     print "Gluster Benchmark Kit report for " + time.strftime("%I:%M:%S")
@@ -183,6 +187,7 @@ def make_report(size, average_seq_write, average_seq_read, average_rand_write, a
     print "Smallfile ls -l   " + str(size) + "   file size: " + str(average_smallfile_ls)
 
 def run_command(command_in):
+    print " ".join(command_in)
     p = subprocess.Popen(command_in, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     while(True):
         retcode = p.poll() #returns None while subprocess is running
@@ -228,7 +233,8 @@ def get_samples(command_in, cleanup, verbose, sample_size):
     sample_number = int(sample_size)
     for x in range(0, sample_number):
         print "About to gather sample --> " + str(x)
-        current_sample = run_iozone(command_in)
+	current_sample = run_iozone(command_in)
+	print "Output -->" + current_sample
         if "iozone" in command_in:
             (result1, result2) = extract_iozone_result(current_sample)
         else:
@@ -254,7 +260,7 @@ def get_samples(command_in, cleanup, verbose, sample_size):
         if x == (sample_number - 1):
             print "No cleanup on " + str(x) + " iteration."
         elif cleanup == "y":
-            cmd = "rm -rf /gluster-mount/*"
+            cmd = "rm -rf " + mount_point  +"/*"
             p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE)
             print "Cleaning up files."
             while True:
