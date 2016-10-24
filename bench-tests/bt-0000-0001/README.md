@@ -41,17 +41,18 @@ If you're able to access root@yourclient_ip without the root password, you're al
         Record size for IOZone runs
         File size for the smallfile tests
         The same value is used for both series of tests
-
 -f <files>
         Number of small files to create per smallfile test thread
         (default threads 8)
--n <numnber of samples>
+-n <number of samples>
         This setting runs a test multiple times (i.e collecting as many samples
         as requested), and provides an average across the runs. IOW, it enables
         collecting multiple test data, to avoid any noise in the test reflecting
         in the results.
+-m <mount point>
+        Specifies the location where a gluster volume is mounted.
 
-Example: GlusterBench.py -s 64 -f 10000 -n 5 -v
+Example: GlusterBench.py -s 64 -f 10000 -n 5 -m storage-pool -v
 ```
 
 ## Sample output
