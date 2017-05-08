@@ -2,7 +2,7 @@ import getopt, sys, subprocess, socket, os, time
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "n:s:f:v", ["help", "output="])
+        opts, args = getopt.getopt(sys.argv[1:], "n:s:f:vm", ["help", "output="])
     except getopt.GetoptError as err:
         # print help information and exit:
         print err # will print something like "option -a not recognized"
