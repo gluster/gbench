@@ -170,6 +170,7 @@ def usage():
     print "  -s --size           Record size for large files, file size for small files."
     print "  -f --files          The nuber of files to create for smallfile tests."
     print "  -n --sample-size    The number of samples to collect for each test."
+    print "  -m --mount-point    The mount point gbench runs against"
     print "Example: GlusterBench.py -s 64 -f 10000 -n 5 -v\n"
 
 def make_report(size, average_seq_write, average_seq_read, average_rand_write, average_rand_read, average_smallfile_create, average_smallfile_read, average_smallfile_ls):
