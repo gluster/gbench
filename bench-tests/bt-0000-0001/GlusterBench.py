@@ -48,66 +48,76 @@ def main():
 
     # Get hostnames
     try:
-        clients = os.environ['CLIENTS']
+        clients = os.environ['CLIENT_LIST']
     except KeyError:
-        print "The environment variable CLIENTS must be set and contain a space separated list of IPs or hostnames"
+        print "The environment variable CLIENTS_LIST must be set and contain a space separated list of IPs or hostnames"
         sys.exit(1)
     try:
-        servers = os.environ['SERVERS']
+        servers = os.environ['SERVER_LIST']
     except KeyError:
-        print "The environment variable SERVERS must be set and contain a space separated list of IPs or hostnames"
+        print "The environment variable SERVERS_LIST must be set and contain a space separated list of IPs or hostnames"
         sys.exit(1)
 
+    # Create working directory in /tmp
+    try:
+        os.stat("/tmp/gbench")
+    except:
+        os.mkdir("/tmp/gbench")
+
     # Check for iozone config file
-    if os.path.isfile("/root/clients.ioz"):
-        # Check for iozone bin
-        if os.path.isfile("/usr/bin/iozone"):
-            print "IOZone check, bin found at /usr/bin/iozone"
-        else:
-            print "IOZone is not installed or the bin is not located at /usr/bin/iozone.  Check that IOZone is installed and the bin is located at /usr/bin/iozone"
-            sys.exit(1)
-    else:
-        # Check for iozone bin
-        if os.path.isfile("/usr/bin/iozone"):
-            print "IOZone check, bin found at /usr/bin/iozone"
-        else:
-            print "IOZone is not installed or the bin is not located at /usr/bin/iozone.  Check that IOZone is installed and the bin is located at /usr/bin/iozone"
-            sys.exit(1)
+    if os.path.isfile("/tmp/gbench/clients.ioz"):
+        # Clean up old file if it exists
+        os.remove("/tmp/gbench/clients.ioz")
+        print "Deleting existing clients.ioz file\n"
+
+    # Check for iozone bin
+    if os.path.isfile("/usr/bin/iozone"):
+        print "IOZone check succesfull, bin found at /usr/bin/iozone.\n"
+
+        # Ask the user if they want to create the file
+        print "IOZone requires a config file when running multi host, gbench would like to create this file in /tmp/gbench/clients.ioz.  Gbench will create this file with the same number of threads as defined by the -t --threads flag.  If -t is not defined it will use the you the default of 4 threads per client.\n"
+        config_iozone = raw_input("\nWould you like to configure the IOZone config file?  Y/N\n")
+
         # Create the clients.ioz file
-        print "The iozone config file must be stored in /root/clients.ioz.  It also must have the same number of threads as defined with the -t --threads flag.  If -t is not defined it will use the you the default of 4 threads per client."
-        config_iozone = raw_input("Would you like to configure the IOZone config file?  Y/N\n")
         if str(config_iozone.upper()) == "Y":
-            print "Configuring IOZone config file -> /root/clients.ioz"
+            print "Configuring IOZone config file -> /tmp/gbench/clients.ioz"
             print "The number of threads per client is " + str(thread_count)
             print "The client mount point is " + str(mount_point)
-            ioz_file = open("/root/clients.ioz", "w+")
+            ioz_file = open("/tmp/gbench/clients.ioz", "w+")
             length = len(clients.split(" "))
             if int(length) == 1:
                 for line in range(0, int(thread_count)):
                     ioz_file.write(str(clients) + " " + str(mount_point) + " " + "/usr/bin/iozone\n")
             else:
-                for client in clients:
+                for client in clients.split(" "):
                     for line in range(0, int(thread_count)):
                         ioz_file.write(str(client) + " " + str(mount_point) + " " + "/usr/bin/iozone\n")
             ioz_file.close()
         else:
+            print "The clients.ioz file is required for IOZone to run, exiting.\n"
             sys.exit(1)
+    else:
+        print "IOZone is not installed or the bin is not located at /usr/bin/iozone.  Check that IOZone is installed and the bin is located at /usr/bin/iozone"
+        sys.exit(1)
 
     # Check for smallfile
-    if os.path.isfile("/root/smallfile/smallfile_cli.py"):
+    if os.path.isfile("/tmp/gbench/smallfile/smallfile_cli.py"):
         pass
     else:
         # Install smallfile if not found
-        print "The smallfile application must be installed in /root/smallfile."
+        print "The smallfile application must be installed in /tmp/gbench/smallfile.\n"
         config_smallfile = raw_input("Would you like to configure smallfile?  NOTE: Git must be installed. Y/N\n")
         if str(config_smallfile.upper()) == 'Y':
-            print "Git cloning the smallfile application in /root/smallfile/"
+            print "Git cloning the smallfile application in /tmp/gbench/smallfile/"
             length = len(clients.split(" "))
             if int(length) == 1:
-                subprocess.call(["ssh", "root@" + clients, "git", "clone", "https://github.com/bengland2/smallfile.git"])
+                subprocess.call(["ssh", "root@" + str(clients), "mkdir", "-p", "/tmp/gbench/smallfile"])
+                subprocess.call(["ssh", "root@" + str(clients), "git", "clone", "https://github.com/bengland2/smallfile.git", "/tmp/gbench/smallfile"])
             else:
-                for client in clients:
-                    subprocess.call(["ssh", "root@" + client, "git", "clone", "https://github.com/bengland2/smallfile.git"])
+                print "Git cloning on the following clients -> " + str(clients)
+                for client in clients.split(" "):
+                    subprocess.call(["ssh", "root@" + str(client), "mkdir", "-p", "/tmp/gbench/smallfile"])
+                    subprocess.call(["ssh", "root@" + str(client), "git", "clone", "https://github.com/bengland2/smallfile.git", "/tmp/gbench/smallfile"])
         else:
             sys.exit(1)
 
@@ -119,7 +129,7 @@ def main():
 
     # IOZone seq writes
     print "Running squential IOZone tests, starting with sequential writes."
-    (result1, result2) = get_samples(["iozone", "-+m", "/root/clients.ioz",
+    (result1, result2) = get_samples(["iozone", "-+m", "/tmp/gbench/clients.ioz",
         "-+h", socket.gethostname(), "-C", "-w", "-c", "-e", "-i", "0", "-+n",
         "-r", str(record_size)+"k", "-s", str(seq_file_size)+"g", "-t", str(thread_count)], "y",
         verbose, sample_size, mount_point)
@@ -129,7 +139,7 @@ def main():
     print "The average was for sequential writes was - " + str(average_seq_write)
 
     # IOZone seq reads
-    (result1, result2) = get_samples(["iozone", "-+m", "/root/clients.ioz",
+    (result1, result2) = get_samples(["iozone", "-+m", "/tmp/gbench/clients.ioz",
         "-+h", socket.gethostname(), "-C", "-w", "-c", "-e", "-i", "1",
         "-+n", "-r", str(record_size)+"k", "-s", str(seq_file_size)+"g", "-t", str(thread_count)], "n",
         verbose, sample_size, mount_point)
@@ -140,7 +150,7 @@ def main():
 
     # IOZone rand read / write
     print "Running random IOZone tests."
-    (result1, result2) = get_samples(["iozone", "-+m", "/root/clients.ioz",
+    (result1, result2) = get_samples(["iozone", "-+m", "/tmp/gbench/clients.ioz",
         "-+h", socket.gethostname(), "-C", "-w", "-c", "-e", "-i", "2",
         "-+n", "-r", str(record_size)+"k", "-s", str(seq_file_size)+"g", "-t", str(thread_count)],
         "n", verbose, sample_size, mount_point)
@@ -158,9 +168,9 @@ def main():
     if int(length_clients) == 1:
         client_list = str(clients)
     else:
-        for client in clients:
+        for client in clients.split(" "):
             if int(first_run) == 0:
-                client_list = str(client) + ","
+                client_list = str(client)
                 first_run = 1
             else:
                 client_list = str(client_list) + "," + str(client)
@@ -169,9 +179,9 @@ def main():
     # Smallfile create
     print "Running smallfile create test."
     (result1, result2) = get_samples(["python",
-        "/root/smallfile/smallfile_cli.py", "--operation", "create",
+        "/tmp/gbench/smallfile/smallfile_cli.py", "--operation", "create",
         "--threads", "8", "--file-size", str(sm_file_size), "--files", str(files),
-        "--top", str(mount_point), "--remote-pgm-dir", "/root/smallfile/", "--host-set", client_list], "y",
+        "--top", str(mount_point), "--remote-pgm-dir", "/tmp/gbench/smallfile/", "--host-set", client_list], "y",
         verbose, sample_size, mount_point)
     print "The results for smallfile creates are: " + str(result1)
     average_smallfile_create = find_average(result1)
@@ -179,9 +189,9 @@ def main():
     # Smallfile read
     print "Running smallfile read test."
     (result1, result2) = get_samples(["python",
-        "/root/smallfile/smallfile_cli.py", "--operation", "read",
+        "/tmp/gbench/smallfile/smallfile_cli.py", "--operation", "read",
         "--threads", "8", "--file-size", str(sm_file_size), "--files", str(files),
-        "--top", str(mount_point), "--remote-pgm-dir", "/root/smallfile/", "--host-set", client_list], "n",
+        "--top", str(mount_point), "--remote-pgm-dir", "/tmp/gbench/smallfile/", "--host-set", client_list], "n",
         verbose, sample_size, mount_point)
     print "The results for smallfile reads are: " + str(result1)
     average_smallfile_read = find_average(result1)
@@ -189,9 +199,9 @@ def main():
     # Smallfile ls -l
     print "Running smallfile ls -l test."
     (result1, result2) = get_samples(["python",
-        "/root/smallfile/smallfile_cli.py", "--operation", "ls-l",
+        "/tmp/gbench/smallfile/smallfile_cli.py", "--operation", "ls-l",
         "--threads", "8", "--file-size", str(sm_file_size), "--files", str(files),
-        "--top", str(mount_point), "--remote-pgm-dir", "/root/smallfile/", "--host-set", client_list], "n",
+        "--top", str(mount_point), "--remote-pgm-dir", "/tmp/gbench/smallfile/", "--host-set", client_list], "n",
         verbose, sample_size, mount_point)
     print "The results for smallfile reads are: " + str(result1)
     average_smallfile_ls = find_average(result1)
