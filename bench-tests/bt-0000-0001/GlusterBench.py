@@ -76,7 +76,7 @@ def main():
         # Create the clients.ioz file
         print "The iozone config file must be stored in /root/clients.ioz.  It also must have the same number of threads as defined with the -t --threads flag.  If -t is not defined it will use the you the default of 4 threads per client."
         config_iozone = raw_input("Would you like to configure the IOZone config file?  Y/N\n")
-        if str(config_iozone) == "Y":
+        if str(config_iozone.upper()) == "Y":
             print "Configuring IOZone config file -> /root/clients.ioz"
             print "The number of threads per client is " + str(thread_count)
             print "The client mount point is " + str(mount_point)
@@ -100,7 +100,7 @@ def main():
         # Install smallfile if not found
         print "The smallfile application must be installed in /root/smallfile."
         config_smallfile = raw_input("Would you like to configure smallfile?  NOTE: Git must be installed. Y/N\n")
-        if str(config_smallfile) == 'Y':
+        if str(config_smallfile.upper()) == 'Y':
             print "Git cloning the smallfile application in /root/smallfile/"
             length = len(clients.split(" "))
             if int(length) == 1:
