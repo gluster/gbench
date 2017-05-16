@@ -86,11 +86,11 @@ def main():
             ioz_file = open("/tmp/gbench/clients.ioz", "w+")
             length = len(clients.split(" "))
             if int(length) == 1:
-                for line in range(0, int(thread_count)):
+                for line in range(0, int(thread_count) // int(length)):
                     ioz_file.write(str(clients) + " " + str(mount_point) + " " + "/usr/bin/iozone\n")
             else:
                 for client in clients.split(" "):
-                    for line in range(0, int(thread_count)):
+                    for line in range(0, int(thread_count) // int(length)):
                         ioz_file.write(str(client) + " " + str(mount_point) + " " + "/usr/bin/iozone\n")
             ioz_file.close()
         else:
