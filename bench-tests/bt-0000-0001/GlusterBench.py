@@ -50,12 +50,12 @@ def main():
     try:
         clients = os.environ['CLIENT_LIST']
     except KeyError:
-        print "The environment variable CLIENTS_LIST must be set and contain a space separated list of IPs or hostnames"
+        print "The environment variable CLIENT_LIST must be set and contain a space separated list of IPs or hostnames"
         sys.exit(1)
     try:
         servers = os.environ['SERVER_LIST']
     except KeyError:
-        print "The environment variable SERVERS_LIST must be set and contain a space separated list of IPs or hostnames"
+        print "The environment variable SERVER_LIST must be set and contain a space separated list of IPs or hostnames"
         sys.exit(1)
 
     # Create working directory in /tmp
