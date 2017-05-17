@@ -1,4 +1,4 @@
-import getopt, sys, subprocess, socket, os, time
+import getopt, sys, subprocess, socket, os, time, shutil
 
 def main():
     try:
@@ -70,6 +70,12 @@ def main():
         os.remove("/tmp/gbench/clients.ioz")
         print "Deleting existing clients.ioz file\n"
 
+    # Move sync drop caches scriptto working location
+    try:
+        shutil.copy2(str(os.getcwd()) + '/sync-drop-caches.sh', '/tmp/gbench/')
+    except:
+        print "Unabe to copy the sync-drop-caches.sh script to the working dir -> /tmp/gebnch"
+
     # Check for iozone bin
     if os.path.isfile("/usr/bin/iozone"):
         print "IOZone check succesfull, bin found at /usr/bin/iozone.\n"
@@ -86,11 +92,11 @@ def main():
             ioz_file = open("/tmp/gbench/clients.ioz", "w+")
             length = len(clients.split(" "))
             if int(length) == 1:
-                for line in range(0, int(thread_count) // int(length)):
+                for line in range(0, int(thread_count)):
                     ioz_file.write(str(clients) + " " + str(mount_point) + " " + "/usr/bin/iozone\n")
             else:
                 for client in clients.split(" "):
-                    for line in range(0, int(thread_count) // int(length)):
+                    for line in range(0, int(thread_count)):
                         ioz_file.write(str(client) + " " + str(mount_point) + " " + "/usr/bin/iozone\n")
             ioz_file.close()
         else:
@@ -131,7 +137,7 @@ def main():
     print "Running squential IOZone tests, starting with sequential writes."
     (result1, result2) = get_samples(["iozone", "-+m", "/tmp/gbench/clients.ioz",
         "-+h", socket.gethostname(), "-C", "-w", "-c", "-e", "-i", "0", "-+n",
-        "-r", str(record_size)+"k", "-s", str(seq_file_size)+"g", "-t", str(thread_count)], "y",
+        "-r", str(record_size)+"k", "-s", str(seq_file_size)+"g", "-t", str(int(thread_count) * int(length))], "y",
         verbose, sample_size, mount_point)
     print "The results for sequential writes are: "+ str(result1)
     average_seq_write = find_average(result1)
@@ -141,7 +147,7 @@ def main():
     # IOZone seq reads
     (result1, result2) = get_samples(["iozone", "-+m", "/tmp/gbench/clients.ioz",
         "-+h", socket.gethostname(), "-C", "-w", "-c", "-e", "-i", "1",
-        "-+n", "-r", str(record_size)+"k", "-s", str(seq_file_size)+"g", "-t", str(thread_count)], "n",
+        "-+n", "-r", str(record_size)+"k", "-s", str(seq_file_size)+"g", "-t", str(int(thread_count) * int(length))], "n",
         verbose, sample_size, mount_point)
     print "The results for sequential reads are: "+ str(result1)
     average_seq_read = find_average(result1)
@@ -152,7 +158,7 @@ def main():
     print "Running random IOZone tests."
     (result1, result2) = get_samples(["iozone", "-+m", "/tmp/gbench/clients.ioz",
         "-+h", socket.gethostname(), "-C", "-w", "-c", "-e", "-i", "2",
-        "-+n", "-r", str(record_size)+"k", "-s", str(seq_file_size)+"g", "-t", str(thread_count)],
+        "-+n", "-r", str(record_size)+"k", "-s", str(seq_file_size)+"g", "-t", str(int(thread_count) * int(length))],
         "n", verbose, sample_size, mount_point)
     print "The results for random reads are: " + str(result1)
     print "The results for random writes are: " + str(result2)
@@ -180,7 +186,7 @@ def main():
     print "Running smallfile create test."
     (result1, result2) = get_samples(["python",
         "/tmp/gbench/smallfile/smallfile_cli.py", "--operation", "create",
-        "--threads", "8", "--file-size", str(sm_file_size), "--files", str(files),
+        "--threads", str(int(thread_count)), "--file-size", str(sm_file_size), "--files", str(files),
         "--top", str(mount_point), "--remote-pgm-dir", "/tmp/gbench/smallfile/", "--host-set", client_list], "y",
         verbose, sample_size, mount_point)
     print "The results for smallfile creates are: " + str(result1)
@@ -190,7 +196,7 @@ def main():
     print "Running smallfile read test."
     (result1, result2) = get_samples(["python",
         "/tmp/gbench/smallfile/smallfile_cli.py", "--operation", "read",
-        "--threads", "8", "--file-size", str(sm_file_size), "--files", str(files),
+        "--threads", str(int(thread_count)), "--file-size", str(sm_file_size), "--files", str(files),
         "--top", str(mount_point), "--remote-pgm-dir", "/tmp/gbench/smallfile/", "--host-set", client_list], "n",
         verbose, sample_size, mount_point)
     print "The results for smallfile reads are: " + str(result1)
@@ -200,7 +206,7 @@ def main():
     print "Running smallfile ls -l test."
     (result1, result2) = get_samples(["python",
         "/tmp/gbench/smallfile/smallfile_cli.py", "--operation", "ls-l",
-        "--threads", "8", "--file-size", str(sm_file_size), "--files", str(files),
+        "--threads", str(int(thread_count)), "--file-size", str(sm_file_size), "--files", str(files),
         "--top", str(mount_point), "--remote-pgm-dir", "/tmp/gbench/smallfile/", "--host-set", client_list], "n",
         verbose, sample_size, mount_point)
     print "The results for smallfile reads are: " + str(result1)
@@ -295,7 +301,7 @@ def get_samples(command_in, cleanup, verbose, sample_size, mount_point):
         print "Adding the current sample to the list: " + str(result1)
         my_samples.append(result1)
         my_samples2.append(result2)
-        cmd = "sh " + str(os.getcwd()) + "/sync-drop-caches.sh"
+        cmd = "sh /tmp/gbench/sync-drop-caches.sh"
 
         p = subprocess.Popen(cmd, shell=True, stderr=subprocess.PIPE)
         print "Dropping cache"

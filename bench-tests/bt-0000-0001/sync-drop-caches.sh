@@ -2,7 +2,7 @@
 
 run_drop_cache()
 {
-    for host in $SERVERS $CLIENTS
+    for host in $SERVER_LIST $CLIENT_LIST
     do
         ssh root@${host} echo "Dropping cache on $host"
         ssh root@${host} sync
