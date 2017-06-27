@@ -1,0 +1,9 @@
+# This file defines variables to use upstream gluster 3.10.1 bits
+#
+
+repository_type: specific
+repo_name: "any user defined string here"
+repo_description: "Any form of repository description here"
+repo_baseurl: "http://nowhere.notnow.com/builds"
+repo_gpgcheck: "yes"
+repo_gpgkey: "http://nowhere.notnow.com/rsa.pub"

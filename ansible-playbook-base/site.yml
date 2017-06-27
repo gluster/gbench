@@ -1,0 +1,40 @@
+---
+# This is the main playbook that runs various role based plays
+
+# sanity check connection to hosts
+- name: Check reachability to all hosts (and leverage this to cache facts)
+  hosts: all
+    - ping
+
+# Check passed in configuration requests and validate against the setup
+# Also, generate required variable files for use in other plays
+- name: Check setup and prepare storage and volume configuration
+  hosts: localhost
+  roles:
+    - validate-setup
+
+# Dummy play to show how variables defined in the previous play would be used
+# The play would ideally go after Gluster clients are prepared
+- name: Prepare bricks
+  hosts: servers
+  roles:
+    - prepare-bricks
+
+# Run through some common tasks on all nodes
+- name: Run common tasks across hosts
+  hosts: all
+  roles:
+    - common
+    - install-repos
+
+# Run gluster sources installation on the servers
+- name: Prepare Gluster servers
+  hosts: servers
+  roles:
+    - prepare-gluster-server
+
+# Run gluster sources installation on the clients
+- name: Prepare Gluster clients
+  hosts: clients
+  roles:
+    - prepare-gluster-client

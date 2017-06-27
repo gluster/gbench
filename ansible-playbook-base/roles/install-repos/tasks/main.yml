@@ -1,0 +1,22 @@
+---
+# This installs the selected Gluster sources on the nodes
+
+# <TODO> Specialize this with ansible_distribution_major_version that can
+# handle different major versions as well
+# <TODO> We need other distribution YAML files as well to be added
+
+- name: Select OS installer play for servers
+  include: "{{ item }}"
+  vars:
+    repo_details: "{{ server_repo }}"
+  with_first_found:
+    - "{{ ansible_distribution | lower }}.yml"
+  when: inventory_hostname in groups['servers']
+
+- name:  Select OS installer play for clients
+  include: "{{ item }}"
+  vars:
+    repo_details: "{{ client_repo }}"
+  with_first_found:
+    - "{{ ansible_distribution | lower }}.yml"
+  when: inventory_hostname in groups['clients']

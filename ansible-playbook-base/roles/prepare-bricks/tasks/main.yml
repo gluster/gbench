@@ -1,0 +1,12 @@
+---
+# This task determines the number of bricks needed and configures
+# the bricks on the respective server hosts
+
+- name: Include generated brick details
+  include_vars:
+    file: storageconfiguration.json
+    name: storageconf
+
+# TODO: Later the brick count task would need to handle volume types
+- name: Testing variable access from generated JSON
+  debug: msg="Got called for host {{ inventory_hostname }} and I can see {{ storageconf[inventory_hostname] }}"

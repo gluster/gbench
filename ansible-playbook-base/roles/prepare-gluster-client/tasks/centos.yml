@@ -1,0 +1,21 @@
+---
+# This task list install Gluster client bits on CentOS (and clones)
+
+- name: Include repository variables passed in 
+  include_vars:
+    file: "{{ repo_details }}"
+
+- name: Install attr package
+  yum:
+    name: attr
+    state: present
+
+- name: Install glusterfs package
+  yum:
+    name: "glusterfs-{{ gluster_major_release }}.{{ gluster_minor_release }}"
+    state: present
+
+- name: Install glusterfs-fuse package
+  yum:
+    name: "glusterfs-fuse-{{ gluster_major_release }}.{{ gluster_minor_release }}"
+    state: present

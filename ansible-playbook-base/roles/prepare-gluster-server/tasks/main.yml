@@ -1,0 +1,20 @@
+---
+# This task list installs gluster server on the specified hosts
+# and forms a gluster cluster between the hosts
+
+# <TODO> Specialize this with ansible_distribution_major_version that can
+# handle different major versions as well
+# <TODO> We need other distribution YAML files as well to be added
+
+- name: Select OS specifc play for servers
+  include: "{{ item }}"
+  vars:
+    repo_details: "{{ server_repo }}"
+  with_first_found:
+    - "{{ ansible_distribution | lower }}.yml"
+
+- name: Peer probe the cluster
+  include: peerprobe.yml
+  vars:
+    host_list: "{{ play_hosts  }}"
+  when: inventory_hostname == play_hosts[0]

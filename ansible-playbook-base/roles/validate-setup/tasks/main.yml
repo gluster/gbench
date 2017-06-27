@@ -1,0 +1,27 @@
+---
+# This play leverages gathered host facts, passed in volume configuration and
+# storage configuration, to check if the setup can be used for the required
+# configuration. Further it operates on the passed in configuration to generate
+# required json files, that can be used to configure bricks on each host, and
+# also possibly gdeploy file(s) that can be used to create and start the gluster
+# volume.
+# One of the outputs of this play is storageconfgiuration.json that is consumed
+# by the role prepare-bricks
+
+# TODO: In the future another output would be volconf.gdeploy, that would be
+# used by another appropriate play
+
+- name: Remove any older host details file
+  file:
+    path: ./saved-facts.json
+    state: absent
+
+- name: Dump all server host details
+  script: ./dumpvars.sh saved-facts.json '{{ hostvars[item]|to_json|safe }}'
+  with_inventory_hostnames: servers
+
+- name: Finalize the dumped file
+  script: ./closevars.sh saved-facts.json ']}'
+
+- name: Check and create brick configuration
+  script: ./CreateBrickConfig.py {{ vc_definition }} {{ sc_definition }} ./saved-facts.json

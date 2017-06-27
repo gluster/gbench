@@ -15,6 +15,22 @@ The intention of starting as above, is to kick-off regular regression runs of
 Gluster, across various supported release milestones, and to report any
 performance regressions in Gluster as the release progresses.
 
+## NOTE:
+  - This is WIP code! has a lot of rough edges
+  - If you have a setup write your own copy of ./setup-profiles/template/
+    - Copy recursively the template directory into a sp-XXXX-XXXX directory
+    - Edit each file as appropriate
+  - Setup passwordless ssh from the host from where you will run ansible (IOW, gbench from) and the rest of the hosts in your inventory
+  - Run from the ansible-playbook-base directory: ansible-playbook -i ../setup-profiles/sp-XXXX-XXXX/secret_inventory.ini ./site.yml -e server_repo="../gluster-sources/your_repo.yml" -e client_repo="../gluster-sources/your_repo.yml" -e vc_definition="../volume-configurations/README.md" -e sc_definition="../storage-configurations/README.md"
+    - vc_definition and sc_definition are dummies for the time being but are needed varibles
+    - secret_inventory.ini is either inventory.ini for your setup or if you have hostnames to keep a secret, then the file that has the hostnames defined
+  - The whole ansible playbook currently only works for CentOS and clones!
+  - At the end of the run, the following changes would have taken place,
+    - IPoIB configuration, i.e if "confibipv4addr" variable is defined
+    - Gluster server bits installed on hosts in the "server" group (including required repositories enabled on the box)
+    - Gluster client bits installed on hosts in the "client" group (including required repositories enabled on the box)
+    - Gluster trusted storage pool created across the hosts in the "servers" group
+
 ## Workflow details
 
 NOTE: This is the current workflow, as we add/clone various aspects of the
@@ -26,11 +42,13 @@ workflow we would be able to tune it better. IOW, we learn as we go/grow.
     number
   * Volume Configuration (VC)
     * This is a volume configuration definition, denoted as VC#
+  * Storage Configuration (SC)
+    * This defines how the storage on the nodes should be configured
   * Gluster Source (GS)
-    * A GS is a place to find the needed gluster bits (RPMs or otherwise)
+    * A GS is a defnition pointing to the needed gluster bits (RPMs or otherwise)
   * Setup Profile (SP)
-    * This is a setup profile, that encompasses the HW, and the OS. The HW
-    specification is expanded to include disks and other needed items.
+    * This is a setup profile, that lists the hosts. The specification is
+    expanded to include disks and other needed items (to be defined).
   * Test Results (TR)
     * These are the raw outputs of the test results, denoted as TR#
   * Monitors
@@ -42,7 +60,7 @@ workflow we would be able to tune it better. IOW, we learn as we go/grow.
 
 A logical view of workflow progression is summarized as follows,
 
-BT# =-(run against)--> VC# =-(created using)--> GS# =-(deployed on)--> SP#
+BT# =-(run against)--> VC# =-(created using)--> GS# =-(with storage)--> SC# =-(deployed on)---> SP#
 
 The workflow, is the reverse of this selection, i.e it sets up the SP before
 moving onto deploying the GS and so on, till finally executing the BT.

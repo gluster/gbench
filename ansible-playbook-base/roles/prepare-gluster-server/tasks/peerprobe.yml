@@ -1,0 +1,6 @@
+---
+- name: Peer probe the cluster
+  command: gluster peer probe {{ hostvars[item]['glusterip'] }}
+  with_items: "{{ host_list }}"
+  when:
+    - item != inventory_hostname
