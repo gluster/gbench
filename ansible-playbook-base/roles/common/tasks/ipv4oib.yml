@@ -1,0 +1,10 @@
+---
+# Setup IP over IB
+# <TODO> This is currently very CentOS specific, and hence is done only when
+# the OS is CentOS
+# TODO: The script ipob-setup.sh should be run as ansible commands
+
+- name: Setup IP over IB
+  script: ./ipob-setup.sh "{{ ipoib_device }}" "{{ ipoib_netmask }}" "{{ confibipv4addr }}" "{{ ipoib_gateway }}"
+  when:
+    - ansible_distribution == "CentOS"

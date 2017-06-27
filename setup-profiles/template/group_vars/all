@@ -1,0 +1,29 @@
+---
+# This is a YAML template, and hence the document starts with the above
+# line '---'.
+
+# Common variables for all hosts go into this file
+# This file is not expected to be a secret, IOW this is posted to the
+# public repository.
+
+# Variables with comments *MUST_BE_PUBLIC* should be public
+
+# Below are ansible variables that define how to connect and talk to the
+# hosts provided. For specializing these see [1]
+ansible_connection: ssh
+ansible_user: root
+
+# The following defines optional IP over IB variables for use when
+# using gbench to configure IP over IB on specific interfaces. These
+# variables are defined in the 'all' variable group as they are common
+# across all the hosts that use IPoverIB in this instance. If each
+# host has specific IPOverIB variables then those are defined in the
+# 'server<m>' or 'client<n>' directories.
+# Infiniband (IB) over IP variables
+ipoib_device: ib0
+ipoib_netmask: 255.255.255.0
+ipoib_use_gateway: yes
+ipoib_gateway: em1
+
+# References:
+# [1] Ansible connection information: http://docs.ansible.com/ansible/intro_inventory.html#list-of-behavioral-inventory-parameters

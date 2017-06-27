@@ -1,0 +1,24 @@
+---
+# Install needed base repositories and packages
+# <TODO> Specialize this with ansible_distribution_major_version that can
+# handle different major versions as well
+# <TODO> We need other distribution YAML files as well to be added for this
+# task
+
+- include: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution | lower }}.yml"
+
+# If IP over IB is configured, execute the required setup for the same
+- name: Setup IP over IB
+  include: ipv4oib.yml
+  when:
+    - confibipv4addr is defined
+    - confibipv4addr not in ansible_all_ipv4_addresses
+
+# TODO: Setup ipv6 over IB if that is possible and ibipv6addr is defined
+# TODO: Setup IPv4 based networking if that is configured ('confipv4addr')
+# TODO: Setup IPv6 based networking if that is configured ('confipv6addr')
+# NOTES:
+# - Ideally only one of the above should be defined per host
+# The above ends common configuration

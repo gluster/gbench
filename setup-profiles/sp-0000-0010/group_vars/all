@@ -1,0 +1,12 @@
+---
+# Common variables for all hosts
+
+ansible_connection: ssh
+ansible_user: root
+
+# Infiniband (IB) over IP variables
+ipoib_device: ib0
+ipoib_netmask: 255.255.255.0
+ipoib_use_gateway: yes
+ipoib_gateway: em1
+

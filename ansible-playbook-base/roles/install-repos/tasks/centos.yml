@@ -1,0 +1,48 @@
+---
+# This will configure the repository from where gluster bits will be installed
+# This file is CentOS (and clones) specific
+#
+# <TODO> We could provide the gpg key here, but disabling that for the moment
+
+- name: Include repository variables passed in 
+  include_vars:
+    file: "{{ repo_details }}"
+
+# Install Gluster upstream released bits on the host
+- name: Install gluster upstream bits
+  yum_repository:
+    name: "Gluster-{{ repository_type }}-{{ gluster_major_release }}-{{ gluster_minor_release }}"
+    description: "Gluster {{ repository_type }} repository" 
+    baseurl: "http://buildlogs.centos.org/centos/{{ ansible_distribution_major_version }}/storage/{{ ansible_userspace_architecture }}/gluster-{{ gluster_major_release }}/"
+    gpgcheck: no
+    enabled: yes
+    state: present
+  when:
+    - repository_type|lower == "upstream"
+
+# Install Gluster upstream QA bits on the host 
+- name: Install gluster upstream QA bits
+  yum_repository:
+    name: "Gluster-{{ repository_type }}-{{ gluster_major_release }}-{{ gluster_minor_release }}"
+    description: "Gluster {{ repository_type }} repository"
+    baseurl: "https://download.gluster.org/pub/gluster/glusterfs/qa-releases/{{ gluster_major_release }}.{{ gluster_minor_release }}/CentOS/epel-{{ ansible_distribution_major_version }}/{{ ansible_userspace_architecture }}/"
+    gpgcheck: no
+    #gpgkey: "https://download.gluster.org/pub/gluster/glusterfs/qa-releases/{{ gluster_major_release }}.{{ gluster_minor_release }}/rsa.pub"
+    enabled: yes
+    state: present
+  when:
+    - repository_type|lower == "upstream-qa"
+
+# Install specific Gluster bits provided on the host
+- name: Install specific gluster bits
+  yum_repository:
+    name: "Gluster-{{ repository_type }}-{{ repo_name }}"
+    description: "User {{ repository_type }} Gluster repository"
+    baseurl: "{{ repo_baseurl }}"
+    gpgcheck: "{{ repo_gpgcheck }}"
+    gpgkey: "{{ repo_gpgkey }}"
+    enabled: yes
+    state: present
+  when:
+    - repository_type|lower == "specific"
+

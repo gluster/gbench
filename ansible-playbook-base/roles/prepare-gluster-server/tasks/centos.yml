@@ -1,0 +1,19 @@
+---
+# This task list install Gluster server bits on CentOS (and clones)
+# Starts the gluster service on the hosts
+
+- name: Include repository variables passed in
+  include_vars:
+    file: "{{ repo_details }}"
+
+# Install Gluster server
+- name: Install gluster server bits
+  yum:
+    name: "glusterfs-server-{{ gluster_major_release }}.{{ gluster_minor_release }}"
+    state: present
+
+- name: Enable glusterd service on hosts
+  systemd:
+    state: started
+    enabled: yes
+    name: glusterd

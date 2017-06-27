@@ -1,0 +1,10 @@
+---
+# This is a YAML template, and hence the document starts with the above
+# line '---'.
+#
+# All public variables for this host are defined here
+# Variables with comments *MUST_BE_PUBLIC* should be public and defined
+# in this file.
+
+glusterip: 10.1.1.10
+

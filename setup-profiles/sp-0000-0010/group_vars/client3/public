@@ -1,0 +1,5 @@
+---
+# All public variables for this host are defined here
+
+glusterip: 10.161.217.22
+confibipv4addr: 10.161.217.22

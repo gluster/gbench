@@ -1,0 +1,6 @@
+---
+# This installs base repositories and packages on CentOS distributions
+- name: Add EPEL-Release repository
+  yum:
+    name: epel-release
+    state: present
