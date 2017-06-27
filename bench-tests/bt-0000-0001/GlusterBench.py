@@ -1,4 +1,4 @@
-import getopt, sys, subprocess, socket, os, time, shutil
+import getopt, sys, subprocess, socket, os, time, shutil, commands
 
 def main():
     try:
@@ -133,10 +133,18 @@ def main():
     print "Running smallfile with " + str(sm_file_size) + "KB files, creating " + str(files) + " files."
     failed_test = False
 
+    # Lets figure out our IP
+    addr = socket.gethostbyname(socket.gethostname())
+    if addr == "127.0.0.1":
+        output = commands.getoutput("/sbin/ifconfig")
+        addr = parseaddress(output)
+
+    print "My IP Address is ----> " + addr 
+
     # IOZone seq writes
     print "Running squential IOZone tests, starting with sequential writes."
     (result1, result2) = get_samples(["iozone", "-+m", "/tmp/gbench/clients.ioz",
-        "-+h", socket.gethostname(), "-C", "-w", "-c", "-e", "-i", "0", "-+n",
+        "-+h", addr, "-C", "-w", "-c", "-e", "-i", "0", "-+n",
         "-r", str(record_size)+"k", "-s", str(seq_file_size)+"g", "-t", str(int(thread_count) * int(length))], "y",
         verbose, sample_size, mount_point)
     print "The results for sequential writes are: "+ str(result1)
@@ -146,7 +154,7 @@ def main():
 
     # IOZone seq reads
     (result1, result2) = get_samples(["iozone", "-+m", "/tmp/gbench/clients.ioz",
-        "-+h", socket.gethostname(), "-C", "-w", "-c", "-e", "-i", "1",
+        "-+h", addr, "-C", "-w", "-c", "-e", "-i", "1",
         "-+n", "-r", str(record_size)+"k", "-s", str(seq_file_size)+"g", "-t", str(int(thread_count) * int(length))], "n",
         verbose, sample_size, mount_point)
     print "The results for sequential reads are: "+ str(result1)
@@ -157,7 +165,7 @@ def main():
     # IOZone rand read / write
     print "Running random IOZone tests."
     (result1, result2) = get_samples(["iozone", "-+m", "/tmp/gbench/clients.ioz",
-        "-+h", socket.gethostname(), "-C", "-w", "-c", "-e", "-i", "2",
+        "-+h", addr, "-C", "-w", "-c", "-e", "-i", "2",
         "-+n", "-r", str(record_size)+"k", "-s", str(seq_file_size)+"g", "-t", str(int(thread_count) * int(length))],
         "n", verbose, sample_size, mount_point)
     print "The results for random reads are: " + str(result1)
