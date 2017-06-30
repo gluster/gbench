@@ -2,28 +2,67 @@
 # This is a YAML template, and hence the document starts with the above
 # line '---'.
 
-# Common variables for all hosts go into this file
-# This file is not expected to be a secret, IOW this is posted to the
-# public repository.
-
+# NOTE: This template file describes all variables that are needed for a setup
+# and mentions variables that *maybe* per host, and hence should go to the hosts
+# public or secret variable file as needed.
+#
+# This is done so as to make this file a single point of reference for all
+# variables that are needed for a provided setup.
+#
 # Variables with comments *MUST_BE_PUBLIC* should be public
+# Variables with comments *NEEDED* should be specified
+# Variables with comments *OPTIONAL* are optional
 
+# ---- Connection specific variables ----
+# *NEEDED*
 # Below are ansible variables that define how to connect and talk to the
 # hosts provided. For specializing these see [1]
+#   - 'ansible_connection'
+#   - 'ansible_user'
+
+# ---- Gluster IP variable ----
+# *NEEDED*
+# Each host needs to have a 'glusteripv4' variable defined, in its host specific
+# variable file
+
+# ---- IB over IP configuration variables ----
+# *OPTIONAL*
+# If the hosts comes with Infiniband gear and you would like gbench to setup
+# IPv4 over IB, then specify 'confibipv4addr' variable for corresponding hosts.
+#   - further specify the following variables for the same,
+#     - 'ipoib_device'
+#     - 'ipoib_netmask'
+#     - 'ipoib_use_gateway'
+#     - 'ipoib_gateway'
+# NOTE: typically, if this is specified the 'glusteripv4 address is the same
+# as the 'confibipv4addr', this is not assumed or mandatory, just that using
+# gbench to setup IP over IB for non-gluster use, seems an overuse of this tool.
+
+# ---- Available devices for use variable ----
+# *NEEDED*
+# Each host that acts as a server, should have a list of devices that gbench
+# can use to configure bricks. The variable is named 'devices'
+
+# References:
+# [1] Ansible connection information: http://docs.ansible.com/ansible/intro_inventory.html#list-of-behavioral-inventory-parameters
+
+# =============================================================================
+# Template example starts here (feel free to clip out comments when defining
+#   your inventory file):
+# =============================================================================
+
+# ---- Connection specific variables ----
 ansible_connection: ssh
 ansible_user: root
 
-# The following defines optional IP over IB variables for use when
-# using gbench to configure IP over IB on specific interfaces. These
-# variables are defined in the 'all' variable group as they are common
-# across all the hosts that use IPoverIB in this instance. If each
-# host has specific IPOverIB variables then those are defined in the
-# 'server<m>' or 'client<n>' directories.
-# Infiniband (IB) over IP variables
+# ---- Gluster IP variable ----
+# See individual host (client<n>/server<m>) file for definition of the same
+
+# ---- IB over IP configuration variables ----
+# These variables are defined in the 'all' variable group as they are common
+# across all the hosts in this template. If each host has specific IPOverIB
+# variables then those are defined in the server<m>/client<n> directories.
 ipoib_device: ib0
 ipoib_netmask: 255.255.255.0
 ipoib_use_gateway: yes
 ipoib_gateway: em1
-
-# References:
-# [1] Ansible connection information: http://docs.ansible.com/ansible/intro_inventory.html#list-of-behavioral-inventory-parameters

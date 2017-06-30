@@ -1,10 +1,21 @@
 ---
 # This is a YAML template, and hence the document starts with the above
 # line '---'.
-#
-# All public variables for this host are defined here
-# Variables with comments *MUST_BE_PUBLIC* should be public and defined
-# in this file.
+
+# NOTE: For details on variables mentioned here look at the ['all'](../all)
+# variable file
+
+# =============================================================================
+# Template example starts here (feel free to clip out comments when defining
+#   your inventory file):
+# =============================================================================
 
 glusterip: 10.1.1.10
 
+devices:
+  - '/dev/sdb'
+  - '/dev/sdc'
+  - '/dev/sdd'
+  - '/dev/sde'
+  - '/dev/sdf'
+  - '/dev/sdg'
