@@ -1,0 +1,41 @@
+---
+- hosts: servers
+  tasks:
+    - name: Configures the first 10G nic with an active link
+      shell: |
+        for dev in $(ls /sys/class/net/)
+        do
+          link=$(ethtool ${dev} | grep "Link detected: yes" &> /dev/null; echo $?)
+          if [ $link -eq 0 ]
+          then
+            speed=$(ethtool ${dev} | grep "Speed: 10000Mb/s" &> /dev/null; echo $?)
+            if [ $speed -eq 0 ]
+              then
+                export MY_NIC=${dev}
+                break
+            fi
+          fi
+        done
+        echo "DEVICE=${MY_NIC}" > /etc/sysconfig/network-scripts/ifcfg-${MY_NIC}
+        echo "BOOTPROTO=none" >> /etc/sysconfig/network-scripts/ifcfg-${MY_NIC}
+        echo "ONBOOT=yes" >> /etc/sysconfig/network-scripts/ifcfg-${MY_NIC}
+        echo "TYPE=Ethernet" >> /etc/sysconfig/network-scripts/ifcfg-${MY_NIC}
+        echo "PREFIX=24" >> /etc/sysconfig/network-scripts/ifcfg-${MY_NIC}
+        echo "IPADDR=${MY_IP}" >> /etc/sysconfig/network-scripts/ifcfg-${MY_NIC}
+
+    - name: Restarts NW
+      service:
+        name: network
+        state: restarted
+
+    - name: Ping test new IP
+      shell: |
+        vgremove -f `vgs --noheadings -o vg_name | egrep -v "vg_rhsauto|vg_storageqe|TestVolume001" | tr '\n' ' '`
+        pvremove -ff -y `pvs --noheadings -o pv_name | egrep -v "vda|sda" | tr '\n' ' '`
+        ping -c 1 ${MY_IP}
+        if [ $? -eq 0 ]
+        then
+          exit 0
+        else
+          exit 1
+        fi

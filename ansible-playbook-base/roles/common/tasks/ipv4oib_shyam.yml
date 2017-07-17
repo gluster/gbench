@@ -1,0 +1,6 @@
+---
+- hosts: all
+  tasks:
+  - name: Setup IP over IB
+    debug:
+        msg: "This is my IP {{ MY_IP }}"

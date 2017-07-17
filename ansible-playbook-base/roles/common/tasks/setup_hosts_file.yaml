@@ -1,0 +1,12 @@
+---
+- hosts: servers
+  tasks:
+    - name: Configures the first 10G nic with an active link
+      shell: |
+        echo "" >> /etc/hosts
+        x=1
+        for node in $MASTERNODE $NODE
+        do
+          echo "$(echo $IP_LIST | cut -d " " -f ${x}) $(echo ${node} | cut -d "." -f 1)-priv.css.lab.eng.rdu2.redhat.com $(echo ${node} | cut -d "." -f 1)-priv" >> /etc/hosts
+          x=$((x+1))
+        done
