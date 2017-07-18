@@ -43,6 +43,17 @@
 # Each host that acts as a server, should have a list of devices that gbench
 # can use to configure bricks. The variable is named 'devices'
 
+# ---- Available PVs for use variable ----
+# *OPTIONAL* ***UNSUPPORTED***
+# Each host that acts as a server, may have a list of PVs (see LVM) for use,
+# in addition to other devices that can be used to build PVs. The variable
+# is named 'pvs' and is a list of PVs that can be consumed directly
+
+# ---- Available VGs for use variable ----
+# *OPTIONAL* ***UNSUPPORTED***
+# Each host that acts as a server, may have a list of VGs (see LVM) for use.
+# The variable is named 'vgs' and is a list of VGs that can be consumed directly
+
 # References:
 # [1] Ansible connection information: http://docs.ansible.com/ansible/intro_inventory.html#list-of-behavioral-inventory-parameters
 

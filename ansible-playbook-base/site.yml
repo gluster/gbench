@@ -1,13 +1,13 @@
 ---
 # This is the main playbook that runs various role based plays
 
-# sanity check connection to hosts
-- name: Check reachability to all hosts (and leverage this to cache facts)
+# Gather and cache all facts from hosts
+- name: Cache facts from all hosts
   hosts: all
-    - ping
+  gather_facts: true
 
 # Check passed in configuration requests and validate against the setup
-# Also, generate required variable files for use in other plays
+# Also, generate required variable files for use in subsequent plays
 - name: Check setup and prepare storage and volume configuration
   hosts: localhost
   roles:
