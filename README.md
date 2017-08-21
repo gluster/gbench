@@ -21,7 +21,7 @@ performance regressions in Gluster as the release progresses.
     - Copy recursively the template directory into a sp-XXXX-XXXX directory
     - Edit each file as appropriate
   - Setup passwordless ssh from the host from where you will run ansible (IOW, gbench from) and the rest of the hosts in your inventory
-  - Run from the ansible-playbook-base directory: ansible-playbook -i ../setup-profiles/sp-XXXX-XXXX/secret_inventory.ini ./site.yml -e server_repo="../gluster-sources/your_repo.yml" -e client_repo="../gluster-sources/your_repo.yml" -e vc_definition="../volume-configurations/README.md" -e sc_definition="../storage-configurations/README.md"
+  - Run from the ansible-playbook-base directory: ansible-playbook -i ../setup-profiles/sp-XXXX-XXXX/secret_inventory.ini ./site.yml -e server_repo="../gluster-sources/your_repo.yml" -e client_repo="../gluster-sources/your_repo.yml" -e vc_definition="../volume-configurations/vc-0000-0010.yml" -e sc_definition="../storage-configurations/sc-0000-0010.yml"
     - vc_definition and sc_definition are dummies for the time being but are needed varibles
     - secret_inventory.ini is either inventory.ini for your setup or if you have hostnames to keep a secret, then the file that has the hostnames defined
   - The whole ansible playbook currently only works for CentOS and clones!

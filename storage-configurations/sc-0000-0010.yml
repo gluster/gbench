@@ -1,0 +1,15 @@
+---
+
+disk_type: rotational
+disk_size: ignore
+disk_grouping: jbod
+group_options: default
+pvoptions: default
+vgoptions: default
+lv_usethinpool: true
+lvpooloptions: default
+lvoptions: default
+fstype: xfs
+fsoptions: default
+mountpoint_base: /mnt/bricks
+# we can take patterns for names here, like vgnamepattern, lvnamepattern

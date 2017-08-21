@@ -17,11 +17,15 @@
     state: absent
 
 - name: Dump all server host details
-  script: ./dumpvars.sh saved-facts.json '{{ hostvars[item]|to_json|safe }}'
+  copy: content='{{ hostvars[item]|to_json|safe }}' dest=./{{ item }}_saved_facts.json
   with_inventory_hostnames: servers
 
-- name: Finalize the dumped file
+- name: Create single file of all hosts details
+  script: ./dumpvars.sh saved-facts.json "./{{ item }}_saved_facts.json"
+  with_inventory_hostnames: servers
+
+- name: Finalize the all hosts facts file
   script: ./closevars.sh saved-facts.json ']}'
 
 - name: Check and create brick configuration
-  script: ./CreateBrickConfig.py {{ vc_definition }} {{ sc_definition }} ./saved-facts.json
+  script: CreateBrickConfig.py {{ vc_definition }} {{ sc_definition }} ./saved-facts.json

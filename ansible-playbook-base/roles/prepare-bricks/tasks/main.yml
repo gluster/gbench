@@ -2,11 +2,71 @@
 # This task determines the number of bricks needed and configures
 # the bricks on the respective server hosts
 
+- name: Include cleanup confguration
+  include_vars:
+    file: cleanupconfiguration.json
+    name: cleanupconf
+
 - name: Include generated brick details
   include_vars:
     file: storageconfiguration.json
     name: storageconf
 
-# TODO: Later the brick count task would need to handle volume types
-- name: Testing variable access from generated JSON
-  debug: msg="Got called for host {{ inventory_hostname }} and I can see {{ storageconf[inventory_hostname] }}"
+- name: Cleanup disks
+  backend_reset: pvs="{{ cleanupconf[inventory_hostname].devices }}"
+                 unmount={{ cleanupconf[inventory_hostname].unmount }}
+
+# TODO: When adding RAID, device section need to be processed
+# TODO: Handle pvoptions including -f when cleanup is specified
+# TODO: gdeploy vg module should take a list of devices
+# TODO: ALL handle options and its defaults
+- name: Create LVM-PVs
+  pv:
+    action: create
+    disks: "{{ item.devices[0] }}"
+    options: "-f"
+  with_items: "{{ storageconf[inventory_hostname].pvs }}"
+  register: result
+  failed_when: "result.rc != 0 and 'Physical Volume Exists' not in result.msg"
+
+- name: Create LVM-VGs
+  vg:
+    action: create
+    disks: "{{ item.pv[0] }}"
+    vgname: "{{ item.vgname }}"
+  with_items: "{{ storageconf[inventory_hostname].vgs }}"
+  register: result
+  failed_when: "result.rc != 0 and 'already exists' not in result.msg and 'is already in volume group' not in result.msg"
+
+- name: Create LVM-thin-p-LVs
+  lv:
+    action: create
+    lvtype: thinpool
+    poolname: "{{ item.lvname }}"
+    vgname: "{{ item.vg }}"
+  with_items: "{{ storageconf[inventory_hostname].lvpools }}"
+
+- name: Create LVM-LVs
+  lv:
+    action: create
+    lvtype: thinlv
+    vgname: "{{ item.vg }}"
+    poolname: "{{ item.lvpool }}"
+    lvname: "{{ item.lvname }}"
+    options: "{{ item.options }}"
+  with_items: "{{ storageconf[inventory_hostname].lvs }}"
+
+- name: Create filesystem
+  filesystem:
+    fstype: "{{ item.fstype }}"
+    dev: "{{ item.lvpath }}"
+  with_items: "{{ storageconf[inventory_hostname].mounts }}"
+
+- name: Create mountpoint
+  file: path={{ item.mountpoint }} state=directory
+  with_items: "{{ storageconf[inventory_hostname].mounts }}"
+
+- name: Mount the filesystem
+  mount: name={{ item.mountpoint }} src={{ item.lvpath }}
+         fstype={{ item.fstype }} state=mounted
+  with_items: "{{ storageconf[inventory_hostname].mounts }}"

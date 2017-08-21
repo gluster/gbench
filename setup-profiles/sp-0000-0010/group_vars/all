@@ -4,6 +4,9 @@
 ansible_connection: ssh
 ansible_user: root
 
+# Cleanup of devices is allowed on this setup
+gbench_device_cleanup: yes
+
 # Infiniband (IB) over IP variables
 ipoib_device: ib0
 ipoib_netmask: 255.255.255.0
