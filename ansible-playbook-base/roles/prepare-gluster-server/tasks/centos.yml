@@ -5,15 +5,24 @@
 - name: Include repository variables passed in
   include_vars:
     file: "{{ repo_details }}"
+  tags:
+    - packagesall
+    - packagesserver
 
 # Install Gluster server
+# TODO: the manner to get el7 should be nicer,
 - name: Install gluster server bits
   yum:
-    name: "glusterfs-server-{{ gluster_major_release }}.{{ gluster_minor_release }}"
+    name: "glusterfs-server-{{ gluster_major_release }}.{{ gluster_minor_release }}.el{{ ansible_distribution_major_version }}"
     state: present
+  tags:
+    - packagesall
+    - packagesserver
 
 - name: Enable glusterd service on hosts
   systemd:
     state: started
     enabled: yes
     name: glusterd
+  tags:
+    - glusterinit

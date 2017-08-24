@@ -12,6 +12,9 @@
   with_first_found:
     - "{{ ansible_distribution | lower }}.yml"
   when: inventory_hostname in groups['servers']
+  tags:
+    - packagesall
+    - packagesserver
 
 - name:  Select OS installer play for clients
   include: "{{ item }}"
@@ -20,3 +23,6 @@
   with_first_found:
     - "{{ ansible_distribution | lower }}.yml"
   when: inventory_hostname in groups['clients']
+  tags:
+    - packagesall
+    - packagesclient

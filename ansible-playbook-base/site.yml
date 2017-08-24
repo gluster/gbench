@@ -5,6 +5,8 @@
 - name: Cache facts from all hosts
   hosts: all
   gather_facts: true
+  tags:
+    - always
 
 # Check passed in configuration requests and validate against the setup
 # Also, generate required variable files for use in subsequent plays
@@ -12,13 +14,16 @@
   hosts: localhost
   roles:
     - validate-setup
+  tags:
+    - storagesetup
 
-# Dummy play to show how variables defined in the previous play would be used
-# The play would ideally go after Gluster clients are prepared
+# Prepare bricks on servers, based on the configuration generated
 - name: Prepare bricks
   hosts: servers
   roles:
     - prepare-bricks
+  tags:
+    - storagesetup
 
 # Run through some common tasks on all nodes
 - name: Run common tasks across hosts
