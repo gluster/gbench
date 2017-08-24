@@ -3,4 +3,4 @@
 
 repository_type: upstream
 gluster_major_release: "3.10"
-gluster_minor_release: "3"
+gluster_minor_release: "3-1"

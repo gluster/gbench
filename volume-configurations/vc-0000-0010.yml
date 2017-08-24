@@ -1,8 +1,8 @@
 ---
 action: create
 volume: testvol
-distribute: 3
-replica_count: 3
+distribute: 6
+#replica_count: 3
 #arbiter_count
-#disperse_count: 2
+disperse_count: 6
 #redundancy_count

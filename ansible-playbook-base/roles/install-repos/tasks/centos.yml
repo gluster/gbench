@@ -25,7 +25,7 @@
   yum_repository:
     name: "Gluster-{{ repository_type }}-{{ gluster_major_release }}-{{ gluster_minor_release }}"
     description: "Gluster {{ repository_type }} repository"
-    baseurl: "https://download.gluster.org/pub/gluster/glusterfs/qa-releases/{{ gluster_major_release }}.{{ gluster_minor_release }}/CentOS/epel-{{ ansible_distribution_major_version }}/{{ ansible_userspace_architecture }}/"
+    baseurl: "https://download.gluster.org/pub/gluster/glusterfs/qa-releases/{{ gluster_qa_release_path }}/CentOS/epel-{{ ansible_distribution_major_version }}/{{ ansible_userspace_architecture }}/"
     gpgcheck: no
     #gpgkey: "https://download.gluster.org/pub/gluster/glusterfs/qa-releases/{{ gluster_major_release }}.{{ gluster_minor_release }}/rsa.pub"
     enabled: yes
