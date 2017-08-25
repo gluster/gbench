@@ -16,7 +16,7 @@
 - name: Peer probe the cluster
   include: peerprobe.yml
   vars:
-    host_list: "{{ play_hosts  }}"
+    host_list: "{{ play_hosts }}"
   when: inventory_hostname == play_hosts[0]
   tags:
     - glusterinit
