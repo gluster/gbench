@@ -1,0 +1,43 @@
+---
+# Task prepares brick directories, and creates and starts, the required
+# gluster volume
+
+- name: Include generated brick details
+  include_vars:
+    file: storageconfiguration.json
+    name: storageconf
+
+- name: Include volume configuration
+  include_vars:
+    file: "{{ vc_definition }}"
+
+- name: Build brickstring for gluster
+  set_fact:
+    brickstring: "{{ brickstring | default('') }},{{ hostvars[item.1]['glusterip'] }}:{{ item.0.mountpoint }}/brickdir"
+  with_nested:
+    - "{{ storageconf[inventory_hostname].mounts }}"
+    - "{{ play_hosts }}"
+
+- name: Create requested gluster volume
+  delegate_to: "{{ play_hosts[0] }}"
+  run_once: true
+  volume:  
+    action:         create
+    volume:         "{{ volume }}"
+    bricks:         "{{ brickstring }}"
+    hosts:          "{{ play_hosts }}"
+    replica:        "{{ replica  | default('no') }}"
+    replica_count:  "{{ replica_count  | default('0') }}"
+    arbiter_count:  "{{ arbiter_count  | default('0') }}"
+    disperse:       "{{ disperse  | default('no') }}"
+    disperse_count: "{{ disperse_count  | default('0') }}"
+    redundancy_count: "{{ redundancy_count  | default('0') }}"
+    force:          "{{ force | default(False) }}"
+
+- name: Starts the created volume
+  delegate_to: "{{ play_hosts[0] }}"
+  run_once: true
+  volume: 
+    action: start
+    volume: "{{ volume }}"
+    force: "{{ force | default(False) }}"
