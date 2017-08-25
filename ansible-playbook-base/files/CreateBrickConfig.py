@@ -53,8 +53,19 @@ class VolumeConfiguration:
         self.disperse_count = self.vcdict.get("disperse_count")
         if self.disperse_count is None:
             self.disperse_count = 0
+            self.redundancy_count = 0
+        else:
+            self.redundancy_count = self.vcdict.get("redundancy_count")
+            if self.redundancy_count is None:
+                raise ValueError("'redundancy_count' in volume definition is"
+                                 " not specified")
+
         if (type(self.disperse_count) is not int) or (self.disperse_count < 0):
             raise ValueError("'disperse_count' in volume definition is not a"
+                             " valid integer")
+
+        if (type(self.redundancy_count) is not int) or (self.redundancy_count < 0):
+            raise ValueError("'redundancy_count' in volume definition is not a"
                              " valid integer")
 
         if (self.replica_count > 0) and (self.disperse_count > 0):
@@ -67,7 +78,7 @@ class VolumeConfiguration:
         """Function to determine number of bricks or mounts needed."""
         mounts_needed = (self.distribute *
                          (self.replica_count if (self.replica_count > 0)
-                          else (self.disperse_count
+                          else ((self.disperse_count + self.redundancy_count)
                                 if (self.disperse_count > 0)
                                 else 1)))
 
@@ -492,34 +503,43 @@ class SetupStorage:
         except:
             raise
 
-        disksavailable = self.hf.getavailabledisks()
+        disksavailableacrosshosts = self.hf.getavailabledisks()
 
         host_idx = 0
-        searchcount = 0
+        cnt = 0
         for i in range(mounts_required):
-            workingdisks = []
-            hostdisklist = disksavailable[host_idx]
+            founddisk = []
+            hostssearched = 0
+            # Search till all hosts are exhausted or a disk
+            # found (hostssearched == -1)
+            while ((hostssearched != len(disksavailableacrosshosts)) and
+                   (hostssearched != -1)):
+                hostdisklist = disksavailableacrosshosts[host_idx]
 
-            # Sort this list as needed type, size for efficiency
-            for disk in hostdisklist:
-                # Apply other constraints as needed!
-                if disk[0] == self.sc.disk_type:
-                    workingdisk = hostdisklist.pop(hostdisklist.index(disk))
-                    workingdisks.append(workingdisk)
-                    break
+                # Sort this list as needed type, size for efficiency
+                for disk in hostdisklist:
+                    # Apply other constraints as needed!
+                    if disk[0] == self.sc.disk_type:
+                        workingdisk = hostdisklist.pop(hostdisklist.
+                                                       index(disk))
+                        founddisk.append(workingdisk)
+                        break
 
-            if (len(workingdisks) != 0):
-                self.adddisks(workingdisks)
-                searchcount = 0
-            else:
-                searchcount += 1
-            if (searchcount == len(disksavailable)):
+                # Move to the next host, for the next inner or outer iteration
+                host_idx += 1
+                if (host_idx == len(disksavailableacrosshosts)):
+                    host_idx = 0
+
+                if (len(founddisk) != 0):
+                    self.adddisks(founddisk)
+                    cnt = cnt + 1
+                    hostssearched = -1
+                else:
+                    hostssearched += 1
+
+            if (hostssearched == len(disksavailableacrosshosts)):
                 raise OverflowError("Cannot support volume configuration on"
                                     " setup, not enough disks")
-
-            host_idx += 1
-            if (host_idx == len(disksavailable)):
-                host_idx = 0
 
         return
 

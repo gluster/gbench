@@ -12,22 +12,33 @@
 # Also, generate required variable files for use in subsequent plays
 - name: Check setup and prepare storage and volume configuration
   hosts: localhost
+  gather_facts: false
   roles:
     - validate-setup
   tags:
     - storagesetup
 
-# Prepare bricks on servers, based on the configuration generated
-- name: Prepare bricks
+- name: Cleanup Gluster volume
   hosts: servers
+  gather_facts: false
   roles:
-    - prepare-bricks
+    - cleanup-gluster-volume
+  tags:
+    - glustervolume
+
+# Prepare bricks on servers, based on the configuration generated
+- name: Prepare brick mounts
+  hosts: servers
+  gather_facts: false
+  roles:
+    - prepare-brick-mounts
   tags:
     - storagesetup
 
 # Run through some common tasks on all nodes
 - name: Run common tasks across hosts
   hosts: all
+  gather_facts: false
   roles:
     - common
     - install-repos
@@ -35,11 +46,21 @@
 # Run gluster sources installation on the servers
 - name: Prepare Gluster servers
   hosts: servers
+  gather_facts: false
   roles:
     - prepare-gluster-server
 
 # Run gluster sources installation on the clients
 - name: Prepare Gluster clients
   hosts: clients
+  gather_facts: false
   roles:
     - prepare-gluster-client
+
+- name: Prepare Gluster volume
+  hosts: servers
+  gather_facts: false
+  roles:
+    - create-gluster-volume
+  tags:
+    - glustervolume

@@ -1,0 +1,47 @@
+---
+# Task prepares brick directories, and creates and starts, the required
+# gluster volume
+
+- name: Include generated brick details
+  include_vars:
+    file: storageconfiguration.json
+    name: storageconf
+  run_once: true
+
+- name: Include volume configuration
+  include_vars:
+    file: "{{ vc_definition }}"
+  run_once: true
+
+# Run per host and set a fact per host, concatenate across hosts in the create
+# task
+- name: Build brickstring for gluster
+  set_fact:
+    brickstring: "{{ brickstring | default('') }},{{ hostvars[inventory_hostname]['glusterip'] }}:{{ item.mountpoint }}/brickdir"
+  loop: "{{ storageconf[inventory_hostname].mounts }}"
+
+- name: Create requested gluster volume
+  delegate_to: "{{ play_hosts[0] }}"
+  run_once: true
+  volume:
+    action:         create
+    volume:         "{{ volume }}"
+    bricks:         "{% for host in play_hosts %}
+                      {{ hostvars[host]['brickstring'] }};
+                    {% endfor %}"
+    hosts:          "{{ play_hosts }}"
+    replica:        "{{ replica  | default('no') }}"
+    replica_count:  "{{ replica_count  | default('0') }}"
+    arbiter_count:  "{{ arbiter_count  | default('0') }}"
+    disperse:       "{{ disperse  | default('no') }}"
+    disperse_count: "{{ disperse_count  | default('0') }}"
+    redundancy_count: "{{ redundancy_count  | default('0') }}"
+    force:          "{{ force | default(False) }}"
+
+- name: Starts the created volume
+  delegate_to: "{{ play_hosts[0] }}"
+  run_once: true
+  volume:
+    action: start
+    volume: "{{ volume }}"
+    force: "{{ force | default(False) }}"

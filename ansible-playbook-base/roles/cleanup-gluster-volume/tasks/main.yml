@@ -1,0 +1,33 @@
+---
+# Task cleans up gluster volume and brick directories associated with them
+
+- name: Include generated brick details
+  include_vars:
+    file: storageconfiguration.json
+    name: storageconf
+
+- name: Include volume configuration
+  include_vars:
+    file: "{{ vc_definition }}"
+
+- name: Stop previous volume (may fail)
+  delegate_to: "{{ play_hosts[0] }}"
+  run_once: true
+  volume:
+    action: stop
+    volume: "{{ volume }}"
+    force: "yes"
+  ignore_errors: yes
+
+- name: Delete previous volume (may fail)
+  delegate_to: "{{ play_hosts[0] }}"
+  run_once: true
+  volume:
+    action: delete
+    volume: "{{ volume }}"
+    force: "yes"
+  ignore_errors: yes
+
+- name: Cleanup brick directory
+  file: path="{{ item.mountpoint }}/brickdir" state=absent
+  with_items: "{{ storageconf[inventory_hostname].mounts }}"

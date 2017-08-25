@@ -4,7 +4,7 @@
 #
 # <TODO> We could provide the gpg key here, but disabling that for the moment
 
-- name: Include repository variables passed in 
+- name: Include repository variables passed in
   include_vars:
     file: "{{ repo_details }}"
 
@@ -12,7 +12,7 @@
 - name: Install gluster upstream bits
   yum_repository:
     name: "Gluster-{{ repository_type }}-{{ gluster_major_release }}-{{ gluster_minor_release }}"
-    description: "Gluster {{ repository_type }} repository" 
+    description: "Gluster {{ repository_type }} repository"
     baseurl: "http://buildlogs.centos.org/centos/{{ ansible_distribution_major_version }}/storage/{{ ansible_userspace_architecture }}/gluster-{{ gluster_major_release }}/"
     gpgcheck: no
     enabled: yes
@@ -20,7 +20,7 @@
   when:
     - repository_type|lower == "upstream"
 
-# Install Gluster upstream QA bits on the host 
+# Install Gluster upstream QA bits on the host
 - name: Install gluster upstream QA bits
   yum_repository:
     name: "Gluster-{{ repository_type }}-{{ gluster_major_release }}-{{ gluster_minor_release }}"

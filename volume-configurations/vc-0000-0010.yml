@@ -2,7 +2,7 @@
 action: create
 volume: testvol
 distribute: 6
-#replica_count: 3
-#arbiter_count
-disperse_count: 6
-#redundancy_count
+disperse: "yes"
+disperse_count: 4
+redundancy_count: 2
+force: "yes"
