@@ -24,14 +24,14 @@
                           log to stderr? : False
                            ext.attr.size : 0
                           ext.attr.count : 0
-host = dhcp37-55.lab.eng.blr.redhat.com,thr = 00,elapsed = 22.428904,files = 1000,records = 1000,status = ok
-host = dhcp37-55.lab.eng.blr.redhat.com,thr = 01,elapsed = 22.353161,files = 1000,records = 1000,status = ok
-host = dhcp37-55.lab.eng.blr.redhat.com,thr = 02,elapsed = 22.381413,files = 1000,records = 1000,status = ok
-host = dhcp37-55.lab.eng.blr.redhat.com,thr = 03,elapsed = 22.409773,files = 1000,records = 1000,status = ok
-host = dhcp37-55.lab.eng.blr.redhat.com,thr = 04,elapsed = 22.477160,files = 1000,records = 1000,status = ok
-host = dhcp37-55.lab.eng.blr.redhat.com,thr = 05,elapsed = 22.396067,files = 1000,records = 1000,status = ok
-host = dhcp37-55.lab.eng.blr.redhat.com,thr = 06,elapsed = 22.458280,files = 1000,records = 1000,status = ok
-host = dhcp37-55.lab.eng.blr.redhat.com,thr = 07,elapsed = 22.449188,files = 1000,records = 1000,status = ok
+host = x,thr = 00,elapsed = 22.428904,files = 1000,records = 1000,status = ok
+host = x,thr = 01,elapsed = 22.353161,files = 1000,records = 1000,status = ok
+host = x,thr = 02,elapsed = 22.381413,files = 1000,records = 1000,status = ok
+host = x,thr = 03,elapsed = 22.409773,files = 1000,records = 1000,status = ok
+host = x,thr = 04,elapsed = 22.477160,files = 1000,records = 1000,status = ok
+host = x,thr = 05,elapsed = 22.396067,files = 1000,records = 1000,status = ok
+host = x,thr = 06,elapsed = 22.458280,files = 1000,records = 1000,status = ok
+host = x,thr = 07,elapsed = 22.449188,files = 1000,records = 1000,status = ok
 total threads = 8
 total files = 8000
 total IOPS = 8000
