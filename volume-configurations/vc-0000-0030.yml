@@ -1,0 +1,5 @@
+---
+action: create
+volume: testvol
+distribute: 17
+force: "yes"

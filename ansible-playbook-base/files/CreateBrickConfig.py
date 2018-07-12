@@ -56,7 +56,7 @@ class VolumeConfiguration:
             self.redundancy_count = 0
         else:
             self.redundancy_count = self.vcdict.get("redundancy_count")
-            if self.disperse_count is None:
+            if self.redundancy_count is None:
                 raise ValueError("'redundancy_count' in volume definition is"
                                  " not specified")
 
@@ -67,6 +67,7 @@ class VolumeConfiguration:
         if (type(self.redundancy_count) is not int) or (self.redundancy_count < 0):
             raise ValueError("'redundancy_count' in volume definition is not a"
                              " valid integer")
+
         if (self.replica_count > 0) and (self.disperse_count > 0):
             raise ValueError("Invalid volume configuration, both replica and"
                              " disperse counts specified")

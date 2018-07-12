@@ -1,7 +1,7 @@
 ---
 action: create
 volume: testvol
-distribute: 13  
+distribute: 13
 replica: "yes"
 replica_count: 3
 arbiter_count: 1

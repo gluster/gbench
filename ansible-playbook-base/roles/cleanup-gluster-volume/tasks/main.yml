@@ -13,7 +13,7 @@
 - name: Stop previous volume (may fail)
   delegate_to: "{{ play_hosts[0] }}"
   run_once: true
-  volume: 
+  volume:
     action: stop
     volume: "{{ volume }}"
     force: "yes"
@@ -22,7 +22,7 @@
 - name: Delete previous volume (may fail)
   delegate_to: "{{ play_hosts[0] }}"
   run_once: true
-  volume: 
+  volume:
     action: delete
     volume: "{{ volume }}"
     force: "yes"
