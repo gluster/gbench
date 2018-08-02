@@ -13,9 +13,21 @@
 # TODO: the manner to get el7 should be nicer,
 - name: Install gluster server bits
   yum:
-      #name: "glusterfs-server-{{ gluster_major_release }}.{{ gluster_minor_release }}.el{{ ansible_distribution_major_version }}"
-    name: glusterfs-server
+    name: "{{ item }}"
     state: latest
+  with_items:
+    - glusterfs
+    - glusterfs-devel
+    - glusterfs-debuginfo
+    - glusterfs-server
+    - glusterfs-client-xlators
+    - glusterfs-extra-xlators
+    - glusterfs-fuse
+    - glusterfs-api-devel
+    - glusterfs-resource-agents
+    - glusterfs-rdma
+    - glusterfs-geo-replication
+    - glusterfs-events
   tags:
     - packagesall
     - packagesserver
