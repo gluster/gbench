@@ -19,6 +19,9 @@
   set_fact:
     brickstring: "{{ brickstring | default('') }},{{ hostvars[inventory_hostname]['glusterip'] }}:{{ item.mountpoint }}/brickdir"
   loop: "{{ storageconf[inventory_hostname].mounts }}"
+  when:
+    - storageconf[inventory_hostname] is defined
+    - storageconf[inventory_hostname].mounts is defined
 
 - name: Create requested gluster volume
   delegate_to: "{{ play_hosts[0] }}"
@@ -27,7 +30,9 @@
     action:         create
     volume:         "{{ volume }}"
     bricks:         "{% for host in play_hosts %}
-                      {{ hostvars[host]['brickstring'] }};
+                      {% if hostvars[host]['brickstring'] is defined %}
+                        {{ hostvars[host]['brickstring'] }};
+                      {% endif %}
                     {% endfor %}"
     hosts:          "{{ play_hosts }}"
     replica:        "{{ replica  | default('no') }}"

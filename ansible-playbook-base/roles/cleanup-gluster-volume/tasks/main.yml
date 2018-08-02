@@ -31,3 +31,7 @@
 - name: Cleanup brick directory
   file: path="{{ item.mountpoint }}/brickdir" state=absent
   with_items: "{{ storageconf[inventory_hostname].mounts }}"
+  when:
+    - storageconf[inventory_hostname] is defined
+    - storageconf[inventory_hostname].mounts is defined
+  ignore_errors: yes
