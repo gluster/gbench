@@ -14,7 +14,7 @@
 - name: Install gluster server bits
   yum:
     name: "{{ item }}"
-    state: latest
+    state: installed
   with_items:
     - glusterfs
     - glusterfs-devel
