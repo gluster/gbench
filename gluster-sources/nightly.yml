@@ -1,0 +1,10 @@
+
+# This file defines variables to use upstream gluster 3.10.1 bits
+#
+
+repository_type: specific
+repo_name: "nightly_gluster"
+repo_description: "This repo stores nightly builds of gluster"
+repo_baseurl: "http://artifacts.ci.centos.org/gluster/nightly/master/$releasever/$basearch"
+repo_gpgcheck: "no"
+#repo_gpgkey: "http://nowhere.notnow.com/rsa.pub"

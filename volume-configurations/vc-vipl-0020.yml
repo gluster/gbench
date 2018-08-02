@@ -1,0 +1,8 @@
+---
+action: create
+volume: testvol
+distribute: 2
+replica: "yes"
+replica_count: 2
+arbiter_count: 0 
+force: "yes"

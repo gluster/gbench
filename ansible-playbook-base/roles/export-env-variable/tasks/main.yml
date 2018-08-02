@@ -1,0 +1,30 @@
+---
+- name: list of clients
+  set_fact:
+    clients: "{{ item }}"
+  with_items:
+    - "{{ groups.clients }}"
+  register: all_clients
+
+- name: Extract items and turn into a list
+  set_fact:
+    client_list: "{{ all_clients.results | map(attribute='ansible_facts.clients') | list }}"
+
+- name: concatenate
+  set_fact:
+    CLIENT: "{{ client_list | join(',') }}"
+
+- name: Examine the joined string
+  debug:
+    msg: "{{ CLIENT }}"
+
+- name: set environment variable
+  lineinfile:
+    dest: /root/.bashrc
+    line: "export CLIENT={{ CLIENT }}"
+    insertafter: 'EOF'
+    state: present
+- name: source bashrc
+  shell: source /root/.bashrc
+
+...

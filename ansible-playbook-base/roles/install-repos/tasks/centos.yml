@@ -40,7 +40,7 @@
     description: "User {{ repository_type }} Gluster repository"
     baseurl: "{{ repo_baseurl }}"
     gpgcheck: "{{ repo_gpgcheck }}"
-    gpgkey: "{{ repo_gpgkey }}"
+    #gpgkey: "{{ repo_gpgkey }}"
     enabled: yes
     state: present
   when:

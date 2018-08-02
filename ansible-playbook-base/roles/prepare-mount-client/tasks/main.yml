@@ -1,0 +1,39 @@
+---
+# This task determines the number of bricks needed and configures
+# the bricks on the respective server hosts
+
+#- name: Include generated brick details
+#  hosts: clients
+#  gather_facts: no
+#  tasks:
+- name: load files
+  include_vars:
+    file: storageconfiguration.json
+    name: storageconf
+  run_once: true
+
+- name: Include volume configuration
+  include_vars:
+    file: "{{ vc_definition }}"
+  run_once: true
+
+- name: print vol name
+  debug:
+      msg: "{{ groups.servers[0] }}:{{ item.mountpoint }}"
+  with_items: "{{ storageconf[groups.servers[0]].mounts }}"
+ 
+- name: Create mountpoint
+  file: 
+    path: "{{ item.mountpoint }}"
+    state: directory
+  with_items: "{{ storageconf[groups.servers[0]].mounts }}"
+
+
+- name: Mount the filesystem
+  mount: 
+    name: "{{ item.mountpoint }}" 
+    src: "{{ groups.servers[0] }}:{{ volume }}"
+    fstype: glusterfs
+    state: mounted
+  with_items: "{{ storageconf[groups.servers[0]].mounts }}"
+
