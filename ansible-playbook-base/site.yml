@@ -64,3 +64,23 @@
     - create-gluster-volume
   tags:
     - glustervolume
+
+- name: Mounting volume on client
+  hosts: clients
+  gather_facts: false
+  roles:
+    - prepare-mount-client
+
+- name: export variables
+  hosts: clients
+  gather_facts: false
+  roles:
+    - export-env-variable
+
+- name: run smallfile
+  hosts: client1
+  gather_facts: false
+  roles:
+    - run-smallfile
+
+
