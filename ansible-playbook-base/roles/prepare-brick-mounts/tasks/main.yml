@@ -25,6 +25,9 @@
     action: create
     disks: "{{ item.devices[0] }}"
     options: "-f"
+  when:
+    - storageconf[inventory_hostname] is defined
+    - storageconf[inventory_hostname].pvs is defined
   with_items: "{{ storageconf[inventory_hostname].pvs }}"
   register: result
   failed_when: "result.rc != 0 and 'Physical Volume Exists' not in result.msg"
@@ -34,6 +37,9 @@
     action: create
     disks: "{{ item.pv[0] }}"
     vgname: "{{ item.vgname }}"
+  when:
+    - storageconf[inventory_hostname] is defined
+    - storageconf[inventory_hostname].vgs is defined
   with_items: "{{ storageconf[inventory_hostname].vgs }}"
   register: result
   failed_when: "result.rc != 0 and 'already exists' not in result.msg and 'is already in volume group' not in result.msg"
@@ -44,6 +50,9 @@
     lvtype: thinpool
     poolname: "{{ item.lvname }}"
     vgname: "{{ item.vg }}"
+  when:
+    - storageconf[inventory_hostname] is defined
+    - storageconf[inventory_hostname].lvpools is defined
   with_items: "{{ storageconf[inventory_hostname].lvpools }}"
 
 - name: Create LVM-LVs
@@ -54,19 +63,31 @@
     poolname: "{{ item.lvpool }}"
     lvname: "{{ item.lvname }}"
     options: "{{ item.options }}"
+  when:
+    - storageconf[inventory_hostname] is defined
+    - storageconf[inventory_hostname].lvs is defined
   with_items: "{{ storageconf[inventory_hostname].lvs }}"
 
 - name: Create filesystem
   filesystem:
     fstype: "{{ item.fstype }}"
     dev: "{{ item.lvpath }}"
+  when:
+    - storageconf[inventory_hostname] is defined
+    - storageconf[inventory_hostname].mounts is defined
   with_items: "{{ storageconf[inventory_hostname].mounts }}"
 
 - name: Create mountpoint
   file: path={{ item.mountpoint }} state=directory
+  when:
+    - storageconf[inventory_hostname] is defined
+    - storageconf[inventory_hostname].mounts is defined
   with_items: "{{ storageconf[inventory_hostname].mounts }}"
 
 - name: Mount the filesystem
   mount: name={{ item.mountpoint }} src={{ item.lvpath }}
          fstype={{ item.fstype }} state=mounted
+  when:
+    - storageconf[inventory_hostname] is defined
+    - storageconf[inventory_hostname].mounts is defined
   with_items: "{{ storageconf[inventory_hostname].mounts }}"
