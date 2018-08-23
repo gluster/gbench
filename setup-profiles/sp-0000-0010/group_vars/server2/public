@@ -1,22 +1,22 @@
 ---
 # All public variables for this host are defined here
 
-glusterip: 10.161.217.11
+glusterip: host2-server
 confibipv4addr: 10.161.217.11
 
 devices:
   - '/dev/sdb'
   - '/dev/sdc'
-  - '/dev/sdd'
-  - '/dev/sde'
-  - '/dev/sdf'
-  - '/dev/sdg'
-  - '/dev/sdh'
-  - '/dev/sdi'
-  - '/dev/sdj'
-  - '/dev/sdk'
-  - '/dev/sdl'
-  - '/dev/sdm'
-  - '/dev/sdn'
-  - '/dev/sdo'
-  - '/dev/sdp'
+#  - '/dev/sdd'
+#  - '/dev/sde'
+#  - '/dev/sdf'
+#  - '/dev/sdg'
+#  - '/dev/sdh'
+#  - '/dev/sdi'
+#  - '/dev/sdj'
+#  - '/dev/sdk'
+#  - '/dev/sdl'
+#  - '/dev/sdm'
+#  - '/dev/sdn'
+#  - '/dev/sdo'
+#  - '/dev/sdp'

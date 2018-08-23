@@ -1,6 +1,6 @@
 ---
 # All public variables for this host are defined here
 
-glusterip: 10.161.217.21
-confibipv4addr: 10.161.217.21
+glusterip: host6-client
+#confibipv4addr: 10.161.217.21
 
