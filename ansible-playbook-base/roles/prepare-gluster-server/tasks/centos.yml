@@ -16,18 +16,7 @@
     name: "{{ item }}"
     state: installed
   with_items:
-    - glusterfs
-    - glusterfs-devel
-    - glusterfs-debuginfo
     - glusterfs-server
-    - glusterfs-client-xlators
-    - glusterfs-extra-xlators
-    - glusterfs-fuse
-    - glusterfs-api-devel
-    - glusterfs-resource-agents
-    - glusterfs-rdma
-    - glusterfs-geo-replication
-    - glusterfs-events
   tags:
     - packagesall
     - packagesserver
