@@ -1,7 +1,7 @@
 ---
 # This task list install Gluster client bits on CentOS (and clones)
 
-- name: Include repository variables passed in 
+- name: Include repository variables passed in
   include_vars:
     file: "{{ repo_details }}"
 
@@ -13,11 +13,12 @@
 # TODO: the manner to get el7 should be nicer,
 - name: Install glusterfs package
   yum:
-    name: "glusterfs-{{ gluster_major_release }}.{{ gluster_minor_release }}.el{{ ansible_distribution_major_version }}"
+  #  name: "glusterfs-{{ gluster_major_release }}.{{ gluster_minor_release }}.el{{ ansible_distribution_major_version }}"
+    name: glusterfs
     state: present
 
 # TODO: the manner to get el7 should be nicer,
 - name: Install glusterfs-fuse package
   yum:
-    name: "glusterfs-fuse-{{ gluster_major_release }}.{{ gluster_minor_release }}.el{{ ansible_distribution_major_version }}"
+    name: glusterfs-fuse
     state: present

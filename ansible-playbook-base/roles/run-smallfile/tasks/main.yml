@@ -1,0 +1,39 @@
+---
+- name: clone smallfile
+  git:
+    repo: https://github.com/bengland2/smallfile.git
+    dest: /tmp/gbench/smallfile
+
+- name: copy smallfile runner
+  copy:
+    src: /root/gbench/ansible-playbook-base/files/runSmallFile.sh
+    dest: /root/
+    mode: 0777
+  hosts: client1
+
+#- name: set env and exexcute smallfile
+#  command: bash /root/runSmallFile.sh create 10
+#  environment:
+#    CLIENT: "{{ my_joined_list }}"
+#  hosts: client1
+
+- name: set env and exexcute smallfile
+  shell: ./runSmallFile.sh create 50
+  args:
+    chdir: /root/
+
+- name: installing dependencies to gather data
+  pip:
+    name: "{{ item }}"
+  with_items:
+    - numpy
+    - scipy
+
+- name: execute smallfile_rsptimes_stats.py to parse data
+  command: python /tmp/gbench/smallfile/smallfile_rsptimes_stats.py /mnt/bricks/fsgbench0001/network_shared/
+
+- name: fetching parsed response time
+  fetch:
+    src: /mnt/bricks/fsgbench0001/rsptime-summary.csv
+    dest: /root/output/
+...
