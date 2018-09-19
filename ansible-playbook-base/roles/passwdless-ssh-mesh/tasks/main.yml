@@ -1,0 +1,42 @@
+---
+# This task creates ssh keys on each host, or uses existing keys and populates
+# the authorized keys on other hosts (in scope of the play) to trust the
+# existing or generated key.
+
+- name: Generate ssh key for ansible user
+  user:
+    name: "{{ ansible_user }}"
+    generate_ssh_key: yes
+    ssh_key_file: .ssh/id_rsa
+
+- name: Gather ansible users ssh public key
+  shell: cat ~/.ssh/id_rsa.pub
+  register: user_ssh_pubkey
+
+- name: Authorize ansible user on all hosts
+  authorized_key:
+    user: "{{ ansible_user }}"
+    key: "{{ hostvars[item]['user_ssh_pubkey']['stdout'] }}"
+  with_items: "{{ play_hosts }}"
+
+- name: Gather hosts ssh public key for Gluster IP
+  shell: ssh-keyscan -t rsa {{ glusterip }}
+  register: host_ssh_gip_pubkey
+
+- name: Trust all play hosts ssh Gluster IP
+  known_hosts:
+    state: present
+    name: "{{ hostvars[item]['glusterip'] }}"
+    key: "{{ hostvars[item]['host_ssh_gip_pubkey']['stdout'] }}"
+  with_items: "{{ play_hosts }}"
+
+- name: Gather hosts ssh public key for hostname
+  shell: ssh-keyscan -t rsa {{ inventory_hostname }}
+  register: host_ssh_pubkey
+
+- name: Trust all play hosts ssh by hostname
+  known_hosts:
+    state: present
+    name: "{{ hostvars[item]['inventory_hostname'] }}"
+    key: "{{ hostvars[item]['host_ssh_pubkey']['stdout'] }}"
+  with_items: "{{ play_hosts }}"

@@ -79,3 +79,9 @@
   roles:
     - mount-gluster-volume
 
+- name: Enable SSH trust across hosts
+  hosts: all
+  gather_facts: false
+  roles:
+    - passwdless-ssh-mesh
+
