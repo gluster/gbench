@@ -15,14 +15,13 @@ The intention of starting as above, is to kick-off regular regression runs of
 Gluster, across various supported release milestones, and to report any
 performance regressions in Gluster as the release progresses.
 
-## NOTE:
+## Using gbench for benchmarking
   - This is WIP code! has a lot of rough edges
   - If you have a setup write your own copy of ./setup-profiles/template/
     - Copy recursively the template directory into a sp-XXXX-XXXX directory
     - Edit each file as appropriate
   - Setup passwordless ssh from the host from where you will run ansible (IOW, gbench from) and the rest of the hosts in your inventory
-  - Run from the ansible-playbook-base directory: ansible-playbook -i ../setup-profiles/sp-XXXX-XXXX/secret_inventory.ini ./site.yml -e server_repo="../gluster-sources/your_repo.yml" -e client_repo="../gluster-sources/your_repo.yml" -e vc_definition="../volume-configurations/vc-0000-0010.yml" -e sc_definition="../storage-configurations/sc-0000-0010.yml"
-    - vc_definition and sc_definition are dummies for the time being but are needed varibles
+  - Run from the ansible-playbook-base directory: ansible-playbook -i ../setup-profiles/sp-XXXX-XXXX/secret_inventory.ini ./site.yml -e server_repo="../gluster-sources/your_repo.yml" -e client_repo="../gluster-sources/your_repo.yml" -e vc_definition="../volume-configurations/vc-0000-0010.yml" -e sc_definition="../storage-configurations/sc-0000-0010.yml" -e bt_definition="../bench-tests/bt-0000-0010.yml"
     - secret_inventory.ini is either inventory.ini for your setup or if you have hostnames to keep a secret, then the file that has the hostnames defined
   - The whole ansible playbook currently only works for CentOS and clones!
   - At the end of the run, the following changes would have taken place,
@@ -30,6 +29,8 @@ performance regressions in Gluster as the release progresses.
     - Gluster server bits installed on hosts in the "server" group (including required repositories enabled on the box)
     - Gluster client bits installed on hosts in the "client" group (including required repositories enabled on the box)
     - Gluster trusted storage pool created across the hosts in the "servers" group
+    - Provided disks to gbench cleaned up and made ready for volume configuration
+    - Provided volume created as per configuration, on a set of disks provided
 
 ## Workflow details
 
