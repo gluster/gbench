@@ -1,0 +1,21 @@
+---
+# Role mounts the gluster volume on play hosts
+# TODO:
+#   - We need to mount FUSE/NFS/Other and role should adapt to the type
+
+- name: Include volume configuration
+  include_vars:
+    file: "{{ vc_definition }}"
+  run_once: true
+
+- name: Create mountpoint
+  file:
+    path: "{{ test_mountpoint }}"
+    state: directory
+
+- name: Mount the Gluster filesystem
+  mount:
+    path: "{{ test_mountpoint }}"
+    src: "{{ hostvars[groups['servers'][0]]['glusterip'] }}:{{ volume }}"
+    fstype: glusterfs
+    state: mounted

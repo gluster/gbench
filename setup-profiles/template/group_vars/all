@@ -25,6 +25,12 @@
 # Each host needs to have a 'glusteripv4' variable defined, in its host specific
 # variable file
 
+# ---- Gluster client mountpoint variable ----
+# *OPTIONAL*
+# Each client host can provide a mountpoint, where created Gluster volumes would
+# be mounted for the various tests. If unspecified this will default to the
+# existing roles default variables. The variable is named 'test_mountpoint'
+
 # ---- IB over IP configuration variables ----
 # *OPTIONAL*
 # If the hosts comes with Infiniband gear and you would like gbench to setup

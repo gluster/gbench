@@ -1,0 +1,6 @@
+---
+
+- name: Unmount Gluster filesystem
+  mount:
+    path: "{{ test_mountpoint }}"
+    state: unmounted

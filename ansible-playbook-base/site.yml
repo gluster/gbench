@@ -18,6 +18,14 @@
   tags:
     - storagesetup
 
+- name: Cleanup gluster mounts
+  hosts: clients
+  gather_facts: false
+  roles:
+    - cleanup-gluster-clients
+  tags:
+    - glustervolume
+
 - name: Cleanup Gluster volume
   hosts: servers
   gather_facts: false
@@ -64,3 +72,10 @@
     - create-gluster-volume
   tags:
     - glustervolume
+
+- name: Mount Gluster volume
+  hosts: clients
+  gather_facts: false
+  roles:
+    - mount-gluster-volume
+
