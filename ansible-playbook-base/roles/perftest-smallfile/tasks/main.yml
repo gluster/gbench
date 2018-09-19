@@ -1,0 +1,86 @@
+---
+
+# Debug task
+- name: Display test variables
+  run_once: true
+  debug:
+    msg: "Smallfile Test variable {{ test_vars }}"
+
+# Install tool dependencies
+- name: Check for smallfile executable
+  stat:
+    path: "{{ smallfile_clone_location }}/.git"
+  register: smallfile_present
+  when:
+    - inventory_hostname in groups['clients']
+
+## Install smallfile and dependencies if not present
+- when:
+    - inventory_hostname in groups['clients']
+    - smallfile_present.stat.exists == false
+  block:
+  - name: Installing smallfile dependent packages
+    package:
+      name: "{{ smallfile_pkg_name }}"
+      state: present
+    loop: "{{ smallfile_deps|flatten(levels=1) }}"
+    loop_control:
+      loop_var: smallfile_pkg_name
+
+  - name: clone smallfile
+    git:
+      repo: "{{ smallfile_repo }}"
+      dest: "{{ smallfile_clone_location }}"
+
+# Build common variables for test
+- name: Build client environment variable for smallfile
+  set_fact:
+    clientlist: "{{ hostvars[inventory_hostname]['glusterip'] }}"
+  when:
+    - inventory_hostname == groups['clients'][0]
+
+- name: Expand client environment variable for smallfile
+  set_fact:
+    clientlist: "{{ clientlist }},{{ hostvars[ccount]['glusterip'] }}"
+  loop: "{{ groups['clients'] }}"
+  loop_control:
+    index_var: ccount_idx
+    loop_var: ccount
+  when:
+    - inventory_hostname == groups['clients'][0]
+    - ccount != inventory_hostname
+    - ccount_idx <= test_vars.client_count - 1
+    - test_vars.client_count > 1
+
+# Debug task
+- name: Display client list
+  debug:
+    msg: "echo {{ hostvars[inventory_hostname]['clientlist'] }}"
+  when:
+    - inventory_hostname == groups['clients'][0]
+
+# Ensure directory runtime structure is present
+- name: Check for smallfile execution top directory
+  stat:
+    path: "{{ hostvars[inventory_hostname]['gbench_client_mountpoint'] }}smallfile"
+  register: smallfile_topdir
+  when:
+    - inventory_hostname == groups['clients'][0]
+
+- when:
+  - inventory_hostname == groups['clients'][0]
+  - smallfile_topdir.stat.exists == false
+  block:
+  - name: Create smallfile execution top directory
+    file:
+      path: "{{ hostvars[inventory_hostname]['gbench_client_mountpoint'] }}smallfile"
+      state: directory
+
+# Execute required iterations of the test
+- name: Executing an iteration of Smallfile
+  include_role:
+    name: perftest-smallfile
+    tasks_from: test
+  loop: "{{ range(0, test_vars.iterations)|list }}"
+  loop_control:
+    index_var: smallfile_iter_index

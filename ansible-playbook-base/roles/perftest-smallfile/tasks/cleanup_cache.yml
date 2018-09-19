@@ -1,0 +1,7 @@
+---
+
+- name: Issue sync
+  command: sync
+
+- name: Issue drop cache
+  shell: echo 3 > /proc/sys/vm/drop_caches

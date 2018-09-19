@@ -1,0 +1,6 @@
+---
+
+- name: Display test variables
+  run_once: true
+  debug:
+    msg: "NOT-IMPLEMENTED: FIO Test variable {{ test_vars }}"

@@ -10,12 +10,12 @@
 
 - name: Create mountpoint
   file:
-    path: "{{ test_mountpoint }}"
+    path: "{{ gbench_client_mountpoint }}"
     state: directory
 
 - name: Mount the Gluster filesystem
   mount:
-    path: "{{ test_mountpoint }}"
+    path: "{{ gbench_client_mountpoint }}"
     src: "{{ hostvars[groups['servers'][0]]['glusterip'] }}:{{ volume }}"
     fstype: glusterfs
     state: mounted

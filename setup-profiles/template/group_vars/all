@@ -26,10 +26,11 @@
 # variable file
 
 # ---- Gluster client mountpoint variable ----
-# *OPTIONAL*
-# Each client host can provide a mountpoint, where created Gluster volumes would
-# be mounted for the various tests. If unspecified this will default to the
-# existing roles default variables. The variable is named 'test_mountpoint'
+# *NEEDED*
+# Each client host must provide a mountpoint, where created Gluster volumes
+# would be mounted for the various tests. If unspecified this will default to
+# the existing roles default variables. The variable is named
+# 'gbench_client_mountpoint'
 
 # ---- IB over IP configuration variables ----
 # *OPTIONAL*

@@ -2,5 +2,5 @@
 
 - name: Unmount Gluster filesystem
   mount:
-    path: "{{ test_mountpoint }}"
+    path: "{{ gbench_client_mountpoint }}"
     state: unmounted
