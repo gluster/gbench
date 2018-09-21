@@ -1,16 +1,16 @@
 ---
 benchmarks:
   - {
-      testname: benchmark1,
+      testname: smallfile-benchmark-1,
       type: smallfile,
-      iterations: 1,
+      iterations: 3,
       cleanclientcache: yes,
       cleanservercache: yes,
-      client_count: 2,
+      client_count: 4,
       operation: create,
-      threads: 2,
-      filesize: 4,
-      files: 100,
+      threads: 8,
+      filesize: 64,
+      files: 10000,
       response_times: no,
       cleanup_pre: yes,
       cleanup_between: no,
@@ -18,16 +18,16 @@ benchmarks:
       output-json: yes
     }
   - {
-      testname: benchmark2,
+      testname: smallfile-benchmark-2,
       type: smallfile,
-      iterations: 2,
+      iterations: 3,
       cleanclientcache: yes,
       cleanservercache: yes,
-      client_count: 2,
+      client_count: 4,
       operation: read,
-      threads: 2,
-      filesize: 4,
-      files: 100,
+      threads: 8,
+      filesize: 64,
+      files: 10000,
       response_times: no,
       cleanup_pre: no,
       cleanup_between: no,
@@ -35,19 +35,19 @@ benchmarks:
       output-json: yes
     }
   - {
-      testname: benchmark3,
+      testname: smalfile-benchmark-3,
       type: smallfile,
-      iterations: 1,
+      iterations: 3,
       cleanclientcache: yes,
       cleanservercache: yes,
-      client_count: 2,
+      client_count: 4,
       operation: ls-l,
-      threads: 2,
-      filesize: 4,
-      files: 100,
+      threads: 8,
+      filesize: 64,
+      files: 10000,
       response_times: no,
       cleanup_pre: no,
       cleanup_between: no,
-      cleanup_last: no,
+      cleanup_last: yes,
       output-json: yes
     }

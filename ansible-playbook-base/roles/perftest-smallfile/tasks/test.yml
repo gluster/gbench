@@ -1,5 +1,13 @@
 ---
 
+- name: Cleanup pre-start of test (conditional)
+  shell: rm -rf {{ hostvars[inventory_hostname]['gbench_client_mountpoint'] }}smallfile/*
+  args:
+    executable: /bin/bash
+  when:
+    - inventory_hostname == groups['clients'][0]
+    - test_vars.cleanup_pre and smallfile_iter_index == 0
+
 - name: Cleanup client cache
   include: cleanup_cache.yml
   when:
@@ -17,14 +25,6 @@
     msg: "Running: {{ smallfile_clone_location }}/smallfile_cli.py --operation {{ test_vars.operation|quote }} --threads {{ test_vars.threads|quote }} --file-size {{ test_vars.filesize|quote }} --files {{ test_vars.files|quote }} --top {{ hostvars[inventory_hostname]['gbench_client_mountpoint'] }}smallfile --host-set {{ hostvars[inventory_hostname]['clientlist'] }} --output-json {{ smallfile_json_output }}"
   when:
     - inventory_hostname == groups['clients'][0]
-
-- name: Cleanup pre-start of test (conditional)
-  shell: rm -rf {{ hostvars[inventory_hostname]['gbench_client_mountpoint'] }}smallfile/*
-  args:
-    executable: /bin/bash
-  when:
-    - inventory_hostname == groups['clients'][0]
-    - test_vars.cleanup_pre and smallfile_iter_index == 0
 
 - name: Run a smallfile test
   shell: python {{ smallfile_clone_location }}/smallfile_cli.py --operation {{ test_vars.operation|quote }} --threads {{ test_vars.threads|quote }} --file-size {{ test_vars.filesize|quote }} --files {{ test_vars.files|quote }} --top {{ hostvars[inventory_hostname]['gbench_client_mountpoint'] }}smallfile --host-set {{ hostvars[inventory_hostname]['clientlist'] }} --output-json {{ smallfile_json_output }}

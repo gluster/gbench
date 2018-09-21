@@ -85,3 +85,9 @@
   roles:
     - passwdless-ssh-mesh
 
+- name: Run benchmark tests
+  hosts: all
+  gather_facts: false
+  roles:
+    - run-bench-tests
+
