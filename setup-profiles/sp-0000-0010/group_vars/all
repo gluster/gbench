@@ -13,3 +13,5 @@ ipoib_netmask: 255.255.255.0
 ipoib_use_gateway: yes
 ipoib_gateway: em1
 
+# Mountpoint for clients
+gbench_client_mountpoint: "/mnt/gbench/"

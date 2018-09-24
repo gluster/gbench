@@ -1,0 +1,7 @@
+---
+smallfile_clone_location: /root/tests/smallfile/
+smallfile_repo: https://github.com/bengland2/smallfile.git
+smallfile_deps:
+  - git
+  - python
+smallfile_json_output: /tmp/smallfile_test_out.json

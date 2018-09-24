@@ -1,0 +1,104 @@
+---
+benchmarks:
+  - {
+      testname: fio-benchmark-1,
+      type: fio,
+      iterations: 3,
+      cleanclientcache: yes,
+      cleanservercache: yes,
+      client_count: 4,
+      cleanup_pre: yes,
+      cleanup_between: yes,
+      cleanup_last: yes,
+      testinispec: "[global]\n
+                    rw=write\n
+                    fsync_on_close=1\n
+                    size=4g\n
+                    bs=64k\n
+                    openfiles=1\n
+                    startdelay=0\n
+                    ioengine=sync\n
+\n
+                    [write]\n
+                    directory=/mnt/gbench\n
+                    nrfiles=1\n
+                    filename_format=f.$jobnum.$filenum\n
+                    numjobs=8"
+    }
+  - {
+      testname: fio-benchmark-2,
+      type: fio,
+      iterations: 3,
+      cleanclientcache: yes,
+      cleanservercache: yes,
+      client_count: 4,
+      cleanup_pre: yes,
+      cleanup_between: yes,
+      cleanup_last: yes,
+      testinispec: "[global]\n
+                    rw=read\n
+                    fsync_on_close=1\n
+                    size=4g\n
+                    bs=64k\n
+                    openfiles=1\n
+                    startdelay=0\n
+                    ioengine=sync\n
+\n
+                    [write]\n
+                    directory=/mnt/gbench\n
+                    nrfiles=1\n
+                    filename_format=f.$jobnum.$filenum\n
+                    numjobs=8"
+    }
+  - {
+      testname: fio-benchmark-3,
+      type: fio,
+      iterations: 3,
+      cleanclientcache: yes,
+      cleanservercache: yes,
+      client_count: 4,
+      cleanup_pre: yes,
+      cleanup_between: yes,
+      cleanup_last: yes,
+      testinispec: "[global]\n
+                    rw=randread\n
+                    fsync_on_close=1\n
+                    io_size=1g\n
+                    size=4g\n
+                    bs=64k\n
+                    openfiles=1\n
+                    startdelay=0\n
+                    ioengine=sync\n
+\n
+                    [randwrite]\n
+                    directory=/mnt/gbench\n
+                    nrfiles=1\n
+                    filename_format=f.$jobnum.$filenum\n
+                    numjobs=8"
+    }
+  - {
+      testname: fio-benchmark-4,
+      type: fio,
+      iterations: 3,
+      cleanclientcache: yes,
+      cleanservercache: yes,
+      client_count: 4,
+      cleanup_pre: yes,
+      cleanup_between: yes,
+      cleanup_last: yes,
+      testinispec: "[global]\n
+                    rw=randwrite\n
+                    io_size=1g\n
+                    fsync_on_close=1\n
+                    size=4g\n
+                    bs=64k\n
+                    openfiles=1\n
+                    startdelay=0\n
+                    ioengine=sync\n
+\n
+                    [write]\n
+                    directory=/gluster-mount\n
+                    nrfiles=1\n
+                    filename_format=f.$jobnum.$filenum\n
+                    numjobs=8"\n
+    }

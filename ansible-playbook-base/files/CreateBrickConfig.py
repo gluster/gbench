@@ -90,9 +90,9 @@ class StorageConfiguration:
 
     supported_fstypes = {'xfs'}
     raidname_pattern = "/dev/md%d"
-    vgname_pattern = "vggbench%04d"
-    lvpname_pattern = "lvpoolgbench%04d"
-    lvname_pattern = "lvgbench%04d"
+    vgname_pattern = "vggbench_%04d_%04d"
+    lvpname_pattern = "lvpoolgbench_%04d_%04d"
+    lvname_pattern = "lvgbench_%04d_%04d"
     mount_pattern = "fsgbench%04d"
 
     def __init__(self, infile):
@@ -280,7 +280,8 @@ class HostsFacts:
                 type = rotational|nonrotational,
                 size = string,
                 disk = device,
-                host = hostname
+                host = hostname,
+                idx  = unique host index
             ],
             ...]
         """
@@ -312,7 +313,7 @@ class HostsFacts:
                 size = (ansible_device.get("size")
                         if (ansible_partition is None)
                         else ansible_partition.get("size"))
-                currentdisk = [dtype, size, device, inventory_host]
+                currentdisk = [dtype, size, device, inventory_host, idx]
                 disklist.append(currentdisk)
 
         return disklist
@@ -404,7 +405,8 @@ class SetupStorage:
                 type = rotational|nonrotational,
                 size = string,
                 disk = device,
-                host = hostname
+                host = hostname,
+                idx  = unique host index
             ],
         ...]
 
@@ -462,15 +464,15 @@ class SetupStorage:
 
         devicedefinition.append(self.sc.pvoptions)
 
-        vgname = self.sc.vgname_pattern % hostlist[1]['vgnameidx']
+        vgname = self.sc.vgname_pattern % (diskstoadd[0][4], hostlist[1]['vgnameidx'])
         devicedefinition.append(vgname)
         devicedefinition.append(self.sc.vgoptions)
 
-        lvpoolname = self.sc.lvpname_pattern % hostlist[1]['lvpoolnameidx']
+        lvpoolname = self.sc.lvpname_pattern % (diskstoadd[0][4], hostlist[1]['lvpoolnameidx'])
         devicedefinition.append(lvpoolname)
         devicedefinition.append(self.sc.lvpooloptions)
 
-        lvname = self.sc.lvname_pattern % hostlist[1]['lvnameidx']
+        lvname = self.sc.lvname_pattern % (diskstoadd[0][4], hostlist[1]['lvnameidx'])
         devicedefinition.append(lvname)
         devicedefinition.append(self.sc.lvoptions)
 

@@ -1,0 +1,7 @@
+---
+fio_deps:
+  - zlib-devel
+  - libaio
+  - fio
+fio_json_output: /tmp/fio_test_out.json
+fio_working_directory: /tmp/fio/

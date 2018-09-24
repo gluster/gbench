@@ -1,0 +1,58 @@
+---
+
+- name: Cleanup pre-start of test (conditional)
+  shell: rm -rf {{ hostvars[inventory_hostname]['gbench_client_mountpoint'] }}smallfile/*
+  args:
+    executable: /bin/bash
+  when:
+    - inventory_hostname == groups['clients'][0]
+    - test_vars.cleanup_pre and smallfile_iter_index == 0
+
+- name: Cleanup client cache
+  include: cleanup_cache.yml
+  when:
+    - test_vars.cleanclientcache
+    - inventory_hostname in groups['clients']
+
+- name: Cleanup server cache
+  include: cleanup_cache.yml
+  when:
+    - test_vars.cleanservercache
+    - inventory_hostname in groups['servers']
+
+- name: Echo the test variables
+  debug:
+    msg: "Running: {{ smallfile_clone_location }}/smallfile_cli.py --operation {{ test_vars.operation|quote }} --threads {{ test_vars.threads|quote }} --file-size {{ test_vars.filesize|quote }} --files {{ test_vars.files|quote }} --top {{ hostvars[inventory_hostname]['gbench_client_mountpoint'] }}smallfile --host-set {{ hostvars[inventory_hostname]['clientlist'] }} --output-json {{ smallfile_json_output }}"
+  when:
+    - inventory_hostname == groups['clients'][0]
+
+- name: Run a smallfile test
+  shell: python {{ smallfile_clone_location }}/smallfile_cli.py --operation {{ test_vars.operation|quote }} --threads {{ test_vars.threads|quote }} --file-size {{ test_vars.filesize|quote }} --files {{ test_vars.files|quote }} --top {{ hostvars[inventory_hostname]['gbench_client_mountpoint'] }}smallfile --host-set {{ hostvars[inventory_hostname]['clientlist'] }} --output-json {{ smallfile_json_output }}
+  args:
+    executable: /bin/bash
+  when:
+    - inventory_hostname == groups['clients'][0]
+
+- name: Retrieve test results
+  fetch:
+    src: "{{ smallfile_json_output }}"
+    dest: "/tmp/smallfile-test-{{ test_vars.testname }}-iteration-{{ smallfile_iter_index }}.json"
+    flat: yes
+  when:
+    - inventory_hostname == groups['clients'][0]
+
+- name: Cleanup in between tests (conditional)
+  shell: rm -rf {{ hostvars[inventory_hostname]['gbench_client_mountpoint'] }}smallfile/*
+  args:
+    executable: /bin/bash
+  when:
+    - inventory_hostname == groups['clients'][0]
+    - test_vars.cleanup_between and smallfile_iter_index != test_vars.iterations - 1
+
+- name: Cleanup post last iteration of test (conditional)
+  shell: rm -rf {{ hostvars[inventory_hostname]['gbench_client_mountpoint'] }}smallfile/*
+  args:
+    executable: /bin/bash
+  when:
+    - inventory_hostname == groups['clients'][0]
+    - test_vars.cleanup_last and smallfile_iter_index == test_vars.iterations - 1

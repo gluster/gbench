@@ -1,0 +1,28 @@
+---
+# Role runs through the bench test requests and executes each test
+# TODO:
+#   -
+
+- name: Include bench tests to run
+  include_vars:
+    file: "{{ bt_definition }}"
+  run_once: true
+
+# Debug related
+- name: Display test variables
+  delegate_to: localhost
+  run_once: true
+  debug:
+    msg: "Test variable {{ bench_test }}"
+  with_items: "{{ benchmarks }}"
+  loop_control:
+    loop_var: bench_test
+
+- name: Execute bench test
+  include_role:
+    name: "perftest-{{ bench_test.type }}"
+  vars:
+    test_vars: "{{ bench_test }}"
+  loop: "{{ benchmarks|flatten(levels=1) }}"
+  loop_control:
+    loop_var: bench_test

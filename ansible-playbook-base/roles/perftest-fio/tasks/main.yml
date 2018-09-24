@@ -1,0 +1,87 @@
+---
+
+# Informational task
+- name: Display test variables
+  run_once: true
+  debug:
+    msg: "FIO Test variable {{ test_vars }}"
+
+# Install fio and dependencies
+- name: Installing fio and dependent packages
+  package:
+    name: "{{ fio_pkg_name }}"
+    state: present
+  loop: "{{ fio_deps|flatten(levels=1) }}"
+  loop_control:
+      loop_var: fio_pkg_name
+  when:
+    - inventory_hostname in groups['clients']
+
+# Ensure directory runtime structure is present
+- name: Create fio working directory
+  file:
+    path: "{{ fio_working_directory }}"
+    state: directory
+  when:
+    - inventory_hostname == groups['clients'][0]
+
+# Build client list and start fio deamons on clients for the test
+- name: Unset FIO client list
+  set_fact:
+    fioclientlist: ""
+  when:
+    - inventory_hostname == groups['clients'][0]
+
+- name: Select clients to participate in FIO test
+  set_fact:
+    fioclientlist: "{{ fioclientlist  | default('') }} {{ hostvars[item_client]['inventory_hostname'] }}"
+  loop: "{{ groups['clients'] }}"
+  loop_control:
+    index_var: ccount_idx
+    loop_var: item_client
+  when:
+    - ccount_idx < test_vars.client_count
+    - inventory_hostname == groups['clients'][0]
+
+- name: Remove clients list file
+  file:
+    path: {{ fio_working_directory }}clients.list
+    state: absent
+  when:
+    - inventory_hostname == groups['clients'][0]
+
+- name: Create client list for FIO test
+  shell: echo "{{ hostvars[item_client]['inventory_hostname'] }}" >> {{ fio_working_directory }}clients.list
+  loop: "{{ groups['clients'] }}"
+  loop_control:
+    index_var: ccount_idx
+    loop_var: item_client
+  when:
+    - item_client in hostvars[groups['clients'][0]]['fioclientlist']
+    - inventory_hostname == groups['clients'][0]
+
+- name: Start FIO server on selected clients
+  shell: fio --server --daemonize=/var/run/fio-svr.pid
+  when:
+    - inventory_hostname in groups['clients']
+    - inventory_hostname in hostvars[groups['clients'][0]]['fioclientlist']
+
+# Prepare the test.ini file
+- name: Prepare test.ini for FIO run
+  shell: echo "{{ test_vars.testinispec }}" > {{ fio_working_directory }}test.ini
+  loop: "{{ groups['clients'] }}"
+  loop_control:
+    index_var: ccount_idx
+    loop_var: item_client
+  when:
+    - item_client in hostvars[groups['clients'][0]]['fioclientlist']
+    - inventory_hostname == groups['clients'][0]
+
+# Execute required iterations of the test
+- name: Executing an iteration of FIO
+  include_role:
+    name: perftest-fio
+    tasks_from: test
+  loop: "{{ range(0, test_vars.iterations)|list }}"
+  loop_control:
+    index_var: fio_iter_index
