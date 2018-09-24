@@ -50,6 +50,7 @@
   roles:
     - common
     - install-repos
+    passwdless-ssh-setup
 
 # Run gluster sources installation on the servers
 - name: Prepare Gluster servers
