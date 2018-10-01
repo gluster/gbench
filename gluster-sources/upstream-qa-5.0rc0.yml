@@ -1,0 +1,7 @@
+# This file defines variables to use upstream gluster QA 3.12.0rc0 bits
+#
+
+repository_type: upstream-qa
+gluster_major_release: "5"
+gluster_minor_release: "0rc0"
+gluster_qa_release_path: "5.0rc0"

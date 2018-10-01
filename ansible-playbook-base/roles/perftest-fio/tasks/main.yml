@@ -45,7 +45,7 @@
 
 - name: Remove clients list file
   file:
-    path: {{ fio_working_directory }}clients.list
+    path: "{{ fio_working_directory }}clients.list"
     state: absent
   when:
     - inventory_hostname == groups['clients'][0]

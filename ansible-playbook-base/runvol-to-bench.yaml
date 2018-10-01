@@ -1,0 +1,65 @@
+---
+# This is the main playbook that runs various role based plays
+
+# Gather and cache all facts from hosts
+- name: Cache facts from all hosts
+  hosts: all
+  gather_facts: true
+  tags:
+    - always
+
+# Check passed in configuration requests and validate against the setup
+# Also, generate required variable files for use in subsequent plays
+- name: Check setup and prepare storage and volume configuration
+  hosts: localhost
+  gather_facts: false
+  roles:
+    - validate-setup
+  tags:
+    - storagesetup
+
+- name: Cleanup gluster mounts
+  hosts: clients
+  gather_facts: false
+  roles:
+    - cleanup-gluster-clients
+  tags:
+    - glustervolume
+
+- name: Cleanup Gluster volume
+  hosts: servers
+  gather_facts: false
+  roles:
+    - cleanup-gluster-volume
+  tags:
+    - glustervolume
+
+# Prepare bricks on servers, based on the configuration generated
+- name: Prepare brick mounts
+  hosts: servers
+  gather_facts: false
+  roles:
+    - prepare-brick-mounts
+  tags:
+    - storagesetup
+
+- name: Prepare Gluster volume
+  hosts: servers
+  gather_facts: false
+  roles:
+    - create-gluster-volume
+  tags:
+    - glustervolume
+
+- name: Mount Gluster volume
+  hosts: clients
+  gather_facts: false
+  roles:
+    - mount-gluster-volume
+
+- name: Run benchmark tests
+  hosts: all
+  gather_facts: false
+  roles:
+    - run-bench-tests
+

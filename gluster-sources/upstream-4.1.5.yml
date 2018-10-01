@@ -1,0 +1,6 @@
+# This file defines variables to use upstream gluster 4.1.5 bits
+#
+
+repository_type: upstream
+gluster_major_release: "4.1"
+gluster_minor_release: "5-1"
