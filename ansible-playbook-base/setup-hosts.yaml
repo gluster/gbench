@@ -1,0 +1,53 @@
+---
+# This is the main playbook that runs various role based plays
+
+# Gather and cache all facts from hosts
+- name: Cache facts from all hosts
+  hosts: all
+  gather_facts: true
+  tags:
+    - always
+
+- name: Cleanup gluster mounts
+  hosts: clients
+  gather_facts: false
+  roles:
+    - cleanup-gluster-clients
+  tags:
+    - glustervolume
+
+- name: Cleanup Gluster volume
+  hosts: servers
+  gather_facts: false
+  roles:
+    - cleanup-gluster-volume
+  tags:
+    - glustervolume
+
+# Run through some common tasks on all nodes
+- name: Run common tasks across hosts
+  hosts: all
+  gather_facts: false
+  roles:
+    - common
+    - install-repos
+
+# Run gluster sources installation on the servers
+- name: Prepare Gluster servers
+  hosts: servers
+  gather_facts: false
+  roles:
+    - prepare-gluster-server
+
+# Run gluster sources installation on the clients
+- name: Prepare Gluster clients
+  hosts: clients
+  gather_facts: false
+  roles:
+    - prepare-gluster-client
+
+- name: Enable SSH trust across hosts
+  hosts: all
+  gather_facts: false
+  roles:
+    - passwdless-ssh-mesh

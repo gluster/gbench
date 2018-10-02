@@ -1,0 +1,16 @@
+---
+# This is the main playbook that runs various role based plays
+
+# Gather and cache all facts from hosts
+- name: Cache facts from all hosts
+  hosts: all
+  gather_facts: true
+  tags:
+    - always
+
+- name: Run benchmark tests
+  hosts: all
+  gather_facts: false
+  roles:
+    - run-bench-tests
+

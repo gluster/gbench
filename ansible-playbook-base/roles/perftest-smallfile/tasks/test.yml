@@ -22,12 +22,12 @@
 
 - name: Echo the test variables
   debug:
-    msg: "Running: {{ smallfile_clone_location }}/smallfile_cli.py --operation {{ test_vars.operation|quote }} --threads {{ test_vars.threads|quote }} --file-size {{ test_vars.filesize|quote }} --files {{ test_vars.files|quote }} --top {{ hostvars[inventory_hostname]['gbench_client_mountpoint'] }}smallfile --host-set {{ hostvars[inventory_hostname]['clientlist'] }} --output-json {{ smallfile_json_output }}"
+    msg: "Running: {{ smallfile_clone_location }}/smallfile_cli.py --stonewall {{ test_vars.stonewall|quote }} --operation {{ test_vars.operation|quote }} --threads {{ test_vars.threads|quote }} --file-size {{ test_vars.filesize|quote }} --files {{ test_vars.files|quote }} --top {{ hostvars[inventory_hostname]['gbench_client_mountpoint'] }}smallfile --host-set {{ hostvars[inventory_hostname]['clientlist'] }} --output-json {{ smallfile_json_output }}"
   when:
     - inventory_hostname == groups['clients'][0]
 
 - name: Run a smallfile test
-  shell: python {{ smallfile_clone_location }}/smallfile_cli.py --operation {{ test_vars.operation|quote }} --threads {{ test_vars.threads|quote }} --file-size {{ test_vars.filesize|quote }} --files {{ test_vars.files|quote }} --top {{ hostvars[inventory_hostname]['gbench_client_mountpoint'] }}smallfile --host-set {{ hostvars[inventory_hostname]['clientlist'] }} --output-json {{ smallfile_json_output }}
+  shell: python {{ smallfile_clone_location }}/smallfile_cli.py --stonewall {{ test_vars.stonewall|quote }} --operation {{ test_vars.operation|quote }} --threads {{ test_vars.threads|quote }} --file-size {{ test_vars.filesize|quote }} --files {{ test_vars.files|quote }} --top {{ hostvars[inventory_hostname]['gbench_client_mountpoint'] }}smallfile --host-set {{ hostvars[inventory_hostname]['clientlist'] }} --output-json {{ smallfile_json_output }}
   args:
     executable: /bin/bash
   when:

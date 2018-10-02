@@ -1,7 +1,7 @@
 ---
 action: create
 volume: testvol
-distribute: 6
+distribute: 4
 disperse: "yes"
 disperse_count: 4
 redundancy_count: 2
