@@ -37,7 +37,7 @@ benchmarks:
       output-json: yes
     }
   - {
-      testname: smalfile-benchmark-3,
+      testname: smallfile-benchmark-3,
       type: smallfile,
       iterations: 3,
       cleanclientcache: yes,
