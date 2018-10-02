@@ -396,6 +396,7 @@ class SetupStorage:
         self.sc = sc
         self.vc = vc
         self.ss = []
+        self.brickliststring = ""
 
     def adddisks(self, diskstoadd):
         """Add a disk to the setup list.
@@ -493,6 +494,13 @@ class SetupStorage:
         hostlist[1]['lvpoolnameidx'] += 1
         hostlist[1]['lvnameidx'] += 1
         hostlist[1]['mountpointidx'] += 1
+
+        # Update storage setup brick list to include this disk as well
+        host_dict = self.hf.gethostdict(diskstoadd[0][4])
+        if self.brickliststring == "":
+            self.brickliststring += host_dict.get("glusterip") + ":" + mountpoint + "/brickdir"
+        else:
+            self.brickliststring += str(" ") + host_dict.get("glusterip") + ":" + mountpoint + "/brickdir"
 
     def generatestorageconfiguration(self):
         """Routine to check setup against passed in definitions.
@@ -594,6 +602,7 @@ class SetupStorage:
         outdict['lvpools'] = self.generatelvpoolssection(hostlist)
         outdict['lvs'] = self.generatelvssection(hostlist)
         outdict['mounts'] = self.generatemountsection(hostlist)
+        outdict['bricklist'] = self.brickliststring
 
         return outdict
 
