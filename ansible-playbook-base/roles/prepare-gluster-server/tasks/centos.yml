@@ -1,6 +1,12 @@
 ---
-# This task list install Gluster server bits on CentOS (and clones)
+# This task list install dependency, Gluster server bits on CentOS (and clones)
 # Starts the gluster service on the hosts
+
+# Install lvm
+- name: Install lvm bits
+  yum:
+    name: lvm2
+    state: present
 
 - name: Include repository variables passed in
   include_vars:

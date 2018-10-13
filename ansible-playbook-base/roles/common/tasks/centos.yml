@@ -1,6 +1,11 @@
 ---
 # This installs base repositories and packages on CentOS distributions
 - name: Add EPEL-Release repository
-  yum:
-    name: epel-release
-    state: present
+  yum_repository:
+    name: epel
+    description: EPEL YUM repo
+    mirrorlist: "https://mirrors.fedoraproject.org/mirrorlist?repo=epel-{{ ansible_distribution_major_version }}&arch={{ ansible_userspace_architecture }}"
+    enabled: yes
+    gpgcheck: no
+    keepalive: yes
+

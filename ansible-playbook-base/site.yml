@@ -8,6 +8,14 @@
   tags:
     - always
 
+# Run through some common tasks on all nodes
+- name: Run common tasks across hosts
+  hosts: all
+  gather_facts: false
+  roles:
+    - common
+    - install-repos
+
 # Check passed in configuration requests and validate against the setup
 # Also, generate required variable files for use in subsequent plays
 - name: Check setup and prepare storage and volume configuration
@@ -42,14 +50,6 @@
     - prepare-brick-mounts
   tags:
     - storagesetup
-
-# Run through some common tasks on all nodes
-- name: Run common tasks across hosts
-  hosts: all
-  gather_facts: false
-  roles:
-    - common
-    - install-repos
 
 # Run gluster sources installation on the servers
 - name: Prepare Gluster servers
