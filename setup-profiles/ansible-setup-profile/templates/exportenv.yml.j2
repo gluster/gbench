@@ -1,0 +1,41 @@
+---
+  - include_vars: systems.yml
+
+  - template:
+      src: templates/inventory.ini.j2
+      dest: setup-profile/inventory.ini
+
+# Create directory for servers and copy public file with value set to server ip/hostname
+{% for server in servers.split(',') %}
+{% set var = loop.index %}
+  - file:
+      path: setup-profile/group_vars/server{{ loop.index }}
+      state: directory
+
+  - name: server{{ var }}
+    template:
+      src: templates/server_public.j2
+      dest: setup-profile/group_vars/server{{ var }}/public
+    vars:
+       var: {{ var }}
+
+{% endfor %}
+
+# Create directory for clients and copy public file with value set to client ip/hostname
+{% for client in clients.split(',') %}
+{% set var = loop.index %}
+  - file:
+      path: setup-profile/group_vars/client{{ loop.index }}
+      state: directory
+
+  - name: client{{ var }}
+    template:
+      src: templates/client_public.j2
+      dest: setup-profile/group_vars/client{{ var }}/public
+    vars:
+       var: {{ var }}
+
+{% endfor %}
+
+...
+
