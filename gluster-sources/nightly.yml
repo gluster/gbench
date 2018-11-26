@@ -1,0 +1,5 @@
+repository_type: nightly
+repo_name: "nightly_gluster"
+repo_description: "This repo stores nightly builds of gluster"
+repo_baseurl: "http://artifacts.ci.centos.org/gluster/nightly/master/$releasever/$basearch"
+repo_gpgcheck: "no"

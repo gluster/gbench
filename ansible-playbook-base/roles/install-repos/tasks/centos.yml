@@ -46,3 +46,14 @@
   when:
     - repository_type|lower == "specific"
 
+# Install nightly/downstream Gluster bits provided on the host
+- name: Install nightly/downstream gluster bits
+  yum_repository:
+    name: "Gluster-{{ repository_type }}-{{ repo_name }}"
+    description: "User {{ repository_type }} Gluster repository"
+    baseurl: "{{ repo_baseurl }}"
+    gpgcheck: "no"
+    enabled: yes
+    state: present
+  when:
+    - repository_type|lower == "nightly" or repository_type|lower == "downstream"
