@@ -73,6 +73,12 @@
   tags:
     - glustervolume
 
+- name: Set gluster volume specification
+  hosts: servers
+  gather_facts: false
+  roles:
+    - configure-gluster-volume
+
 - name: Mount Gluster volume
   hosts: clients
   gather_facts: false

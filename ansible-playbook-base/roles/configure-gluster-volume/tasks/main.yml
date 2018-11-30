@@ -1,0 +1,14 @@
+---
+# Tasks sets specification for gluster volume
+
+- name: Include gluster vol specification details
+  include_vars:
+    file: "{{ vs_definition }}"
+  run_once: true
+
+- name: Set gluster volume specification
+  gluster_volume:
+    state: "present"
+    name: "{{ volume }}"
+    options: "{{ options }}"
+  run_once: true
