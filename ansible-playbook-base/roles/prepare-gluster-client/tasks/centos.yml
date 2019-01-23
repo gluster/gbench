@@ -15,9 +15,27 @@
   yum:
     name: "glusterfs-{{ gluster_major_release }}.{{ gluster_minor_release }}.el{{ ansible_distribution_major_version }}"
     state: present
+  when:
+    - repository_type|lower == "upstream" or repository_type|lower == "upstream-qa" or repository_type|lower == "specific"
+
+- name: Install gluster server specific/nightly/downstream bits
+  yum:
+    name: "glusterfs"
+    state: present
+  when:
+    - repository_type|lower == "nightly" or repository_type|lower == "downstream"
 
 # TODO: the manner to get el7 should be nicer,
 - name: Install glusterfs-fuse package
   yum:
     name: "glusterfs-fuse-{{ gluster_major_release }}.{{ gluster_minor_release }}.el{{ ansible_distribution_major_version }}"
     state: present
+  when:
+    - repository_type|lower == "upstream" or repository_type|lower == "upstream-qa" or repository_type|lower == "specific"
+
+- name: Install glusterfs-fuse package
+  yum:
+    name: "glusterfs-fuse"
+    state: present
+  when:
+    - repository_type|lower == "nightly" or repository_type|lower == "downstream"

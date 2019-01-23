@@ -1,0 +1,5 @@
+repository_type: downstream
+repo_name: "downstream_gluster"
+repo_description: "This repo downstream nightly builds of gluster"
+repo_baseurl: "http://nowhere.notnow.com/builds"
+repo_gpgcheck: "no"

@@ -18,6 +18,18 @@
   tags:
     - packagesall
     - packagesserver
+  when:
+    - repository_type|lower == "upstream" or repository_type|lower == "upstream-qa" or repository_type|lower == "specific"
+
+- name: Install gluster server specific/nightly/downstream bits
+  yum:
+    name: "glusterfs-server"
+    state: present
+  tags:
+    - packagesall
+    - packagesserver
+  when:
+    - repository_type|lower == "nightly" or repository_type|lower == "downstream"
 
 - name: Enable glusterd service on hosts
   systemd:

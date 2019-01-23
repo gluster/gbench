@@ -11,7 +11,7 @@
   vars:
     repo_details: "{{ server_repo }}"
   with_first_found:
-    - "{{ ansible_distribution | lower }}.yml"
+    - "{% if ansible_distribution | lower == 'centos' or ansible_distribution | lower == 'redhat'  %}centos.yml{% else %}{{ ansible_distribution | lower }}.yml{% endif %}"
 
 - name: Peer probe the cluster
   include: peerprobe.yml
