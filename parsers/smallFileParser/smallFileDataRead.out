@@ -1,0 +1,43 @@
+                                 version : 3.1
+                           hosts in test : None
+                   top test directory(s) : ['/gluster-mount']
+                               operation : read
+                            files/thread : 1000
+                                 threads : 8
+           record size (KB, 0 = maximum) : 0
+                          file size (KB) : 64
+                  file size distribution : fixed
+                           files per dir : 100
+                            dirs per dir : 10
+              threads share directories? : N
+                         filename prefix : 
+                         filename suffix : 
+             hash file number into dir.? : N
+                     fsync after modify? : N
+          pause between files (microsec) : 1000
+             minimum directories per sec : 50
+                    finish all requests? : Y
+                              stonewall? : Y
+                 measure response times? : N
+                            verify read? : Y
+                                verbose? : False
+                          log to stderr? : False
+                           ext.attr.size : 0
+                          ext.attr.count : 0
+host = x,thr = 00,elapsed = 22.428904,files = 1000,records = 1000,status = ok
+host = x,thr = 01,elapsed = 22.353161,files = 1000,records = 1000,status = ok
+host = x,thr = 02,elapsed = 22.381413,files = 1000,records = 1000,status = ok
+host = x,thr = 03,elapsed = 22.409773,files = 1000,records = 1000,status = ok
+host = x,thr = 04,elapsed = 22.477160,files = 1000,records = 1000,status = ok
+host = x,thr = 05,elapsed = 22.396067,files = 1000,records = 1000,status = ok
+host = x,thr = 06,elapsed = 22.458280,files = 1000,records = 1000,status = ok
+host = x,thr = 07,elapsed = 22.449188,files = 1000,records = 1000,status = ok
+total threads = 8
+total files = 8000
+total IOPS = 8000
+total data =     0.488 GiB
+100.00% of requested files processed, minimum is  90.00
+elapsed time =    22.477
+files/sec = 355.916851
+IOPS = 355.916851
+MiB/sec = 22.244803
