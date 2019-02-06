@@ -12,6 +12,3 @@
     repo_details: "{{ client_repo }}"
   with_first_found:
     - "{% if ansible_distribution | lower == 'centos' or ansible_distribution | lower == 'redhat'  %}centos.yml{% else %}{{ ansible_distribution | lower }}.yml{% endif %}"
-  tags:
-    - packagesall
-    - packagesclient

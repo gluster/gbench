@@ -12,9 +12,6 @@
   with_first_found:
     - "{% if ansible_distribution | lower == 'centos' or ansible_distribution | lower == 'redhat'  %}centos.yml{% else %}{{ ansible_distribution | lower }}.yml{% endif %}"
   when: inventory_hostname in groups['servers']
-  tags:
-    - packagesall
-    - packagesserver
 
 - name:  Select OS installer play for clients
   include: "{{ item }}"
@@ -23,6 +20,3 @@
   with_first_found:
     - "{% if ansible_distribution | lower == 'centos' or ansible_distribution | lower == 'redhat'  %}centos.yml{% else %}{{ ansible_distribution | lower }}.yml{% endif %}"
   when: inventory_hostname in groups['clients']
-  tags:
-    - packagesall
-    - packagesclient

@@ -8,8 +8,6 @@
 - include: "{{ item }}"
   with_first_found:
     - "{% if ansible_distribution | lower == 'centos' or ansible_distribution | lower == 'redhat'  %}centos.yml{% else %}{{ ansible_distribution | lower }}.yml{% endif %}"
-  tags:
-    - packagesall
 
 # If IP over IB is configured, execute the required setup for the same
 - name: Setup IP over IB
@@ -17,8 +15,6 @@
   when:
     - confibipv4addr is defined
     - confibipv4addr not in ansible_all_ipv4_addresses
-  tags:
-    - setupnetwork
 
 # TODO: Setup ipv6 over IB if that is possible and ibipv6addr is defined
 # TODO: Setup IPv4 based networking if that is configured ('confipv4addr')

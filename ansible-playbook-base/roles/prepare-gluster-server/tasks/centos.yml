@@ -11,9 +11,6 @@
 - name: Include repository variables passed in
   include_vars:
     file: "{{ repo_details }}"
-  tags:
-    - packagesall
-    - packagesserver
 
 # Install Gluster server
 # TODO: the manner to get el7 should be nicer,
@@ -21,9 +18,6 @@
   yum:
     name: "glusterfs-server-{{ gluster_major_release }}.{{ gluster_minor_release }}.el{{ ansible_distribution_major_version }}"
     state: present
-  tags:
-    - packagesall
-    - packagesserver
   when:
     - repository_type|lower == "upstream" or repository_type|lower == "upstream-qa" or repository_type|lower == "specific"
 
@@ -31,9 +25,6 @@
   yum:
     name: "glusterfs-server"
     state: present
-  tags:
-    - packagesall
-    - packagesserver
   when:
     - repository_type|lower == "nightly" or repository_type|lower == "downstream"
 
@@ -42,5 +33,3 @@
     state: started
     enabled: yes
     name: glusterd
-  tags:
-    - glusterinit
