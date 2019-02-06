@@ -18,5 +18,3 @@
   vars:
     host_list: "{{ play_hosts }}"
   when: inventory_hostname == play_hosts[0]
-  tags:
-    - glusterinit

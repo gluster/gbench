@@ -9,12 +9,48 @@
     - always
 
 # Run through some common tasks on all nodes
-- name: Run common tasks across hosts
+- name: Prepare all hosts
   hosts: all
   gather_facts: false
   roles:
     - common
+  tags:
+    - preparehosts
+
+- name: Enable SSH trust across hosts
+  hosts: all
+  gather_facts: false
+  roles:
+    - passwdless-ssh-mesh
+  tags:
+    - preparehosts
+
+# Run through some common tasks on all nodes
+- name: Install Gluster repositories
+  hosts: all
+  gather_facts: false
+  roles:
     - install-repos
+  tags:
+    - glinstall
+
+# Run gluster sources installation on the servers
+- name: Prepare Gluster servers
+  hosts: servers
+  gather_facts: false
+  roles:
+    - prepare-gluster-server
+  tags:
+    - glinstall
+
+# Run gluster sources installation on the clients
+- name: Prepare Gluster clients
+  hosts: clients
+  gather_facts: false
+  roles:
+    - prepare-gluster-client
+  tags:
+    - glinstall
 
 # Check passed in configuration requests and validate against the setup
 # Also, generate required variable files for use in subsequent plays
@@ -24,7 +60,7 @@
   roles:
     - validate-setup
   tags:
-    - storagesetup
+    - createvolume
 
 - name: Cleanup gluster mounts
   hosts: clients
@@ -32,7 +68,7 @@
   roles:
     - cleanup-gluster-clients
   tags:
-    - glustervolume
+    - createvolume
 
 - name: Cleanup Gluster volume
   hosts: servers
@@ -40,7 +76,7 @@
   roles:
     - cleanup-gluster-volume
   tags:
-    - glustervolume
+    - createvolume
 
 # Prepare bricks on servers, based on the configuration generated
 - name: Prepare brick mounts
@@ -49,21 +85,7 @@
   roles:
     - prepare-brick-mounts
   tags:
-    - storagesetup
-
-# Run gluster sources installation on the servers
-- name: Prepare Gluster servers
-  hosts: servers
-  gather_facts: false
-  roles:
-    - prepare-gluster-server
-
-# Run gluster sources installation on the clients
-- name: Prepare Gluster clients
-  hosts: clients
-  gather_facts: false
-  roles:
-    - prepare-gluster-client
+    - createvolume
 
 - name: Prepare Gluster volume
   hosts: servers
@@ -71,23 +93,21 @@
   roles:
     - create-gluster-volume
   tags:
-    - glustervolume
+    - createvolume
 
 - name: Mount Gluster volume
   hosts: clients
   gather_facts: false
   roles:
     - mount-gluster-volume
-
-- name: Enable SSH trust across hosts
-  hosts: all
-  gather_facts: false
-  roles:
-    - passwdless-ssh-mesh
+  tags:
+    - createvolume
 
 - name: Run benchmark tests
   hosts: all
   gather_facts: false
   roles:
     - run-bench-tests
+  tags:
+    - runtests
 

@@ -13,8 +13,8 @@
     name: storageconf
 
 - name: Cleanup disks
-  backend_reset: pvs="{{ cleanupconf[inventory_hostname].devices }}"
-                 unmount={{ cleanupconf[inventory_hostname].unmount }}
+  backend_reset: pvs="{{ cleanupconf[inventory_hostname].devices | list }}"
+                 unmount=["{{ cleanupconf[inventory_hostname].unmount }}"]
 
 # TODO: When adding RAID, device section need to be processed
 # TODO: Handle pvoptions including -f when cleanup is specified
