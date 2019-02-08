@@ -80,7 +80,7 @@ All work is carried on in ansible-client host (assumed to be CentOS in this exam
     - `cd <workdir>`
     - `git clone https://github.com/gluster/gbench.git`
     - `git clone https://github.com/gluster/gdeploy.git`
-    - `ln -s ../../gdeploy/modules ./gbench/ansible-playbook-base/`
+    - `ln -s ../../gdeploy/modules ./gbench/ansible-playbook-base/library`
     - `yum install epel-release`
     - `yum install ansible` (2.5 or greater) (epel on CentOS7 brings in > 2.6)
 
