@@ -22,7 +22,7 @@
 
 # ---- Gluster IP variable ----
 # *NEEDED*
-# Each host needs to have a 'glusteripv4' variable defined, in its host specific
+# Each host needs to have a 'glusterip' variable defined, in its host specific
 # variable file
 
 # ---- Gluster client mountpoint variable ----
@@ -41,7 +41,7 @@
 #     - 'ipoib_netmask'
 #     - 'ipoib_use_gateway'
 #     - 'ipoib_gateway'
-# NOTE: typically, if this is specified the 'glusteripv4 address is the same
+# NOTE: typically, if this is specified the 'glusterip address is the same
 # as the 'confibipv4addr', this is not assumed or mandatory, just that using
 # gbench to setup IP over IB for non-gluster use, seems an overuse of this tool.
 
@@ -49,6 +49,16 @@
 # *NEEDED*
 # Each host that acts as a server, should have a list of devices that gbench
 # can use to configure bricks. The variable is named 'devices'
+
+# ---- Allowed to cleanup devices ----
+# *OPTIONAL*
+# For the list of devices mentioned in the devices section of each server,
+# instruct gbench if it can remove all stroage configuration on that device if
+# the device is found to be already in use.
+# Use the option 'gbench_device_cleanup: yes' to enable disk cleanup.
+# NOTE: Typically on test systems, as multiple volumes are created one after the
+# other to run various tests, setting this to "yes" helps reuse the disks that
+# are given to gbench for benchmarking purposes.
 
 # ---- Available PVs for use variable ----
 # *OPTIONAL* ***UNSUPPORTED***
@@ -76,6 +86,9 @@ ansible_user: root
 # ---- Gluster IP variable ----
 # See individual host (client<n>/server<m>) file for definition of the same
 
+# ---- Allowed to cleanup devices ----
+gbench_device_cleanup: yes
+
 # ---- IB over IP configuration variables ----
 # These variables are defined in the 'all' variable group as they are common
 # across all the hosts in this template. If each host has specific IPOverIB
@@ -84,3 +97,6 @@ ipoib_device: ib0
 ipoib_netmask: 255.255.255.0
 ipoib_use_gateway: yes
 ipoib_gateway: em1
+
+# ---- Gluster client mountpoint variable ----
+gbench_client_mountpoint: "/mnt/gbench/"
