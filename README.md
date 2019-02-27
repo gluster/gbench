@@ -1,15 +1,14 @@
 # Gluster Performance Benchmarking
 
-This git repository is aimed towards providing various Gluster benchmarking
-tests and their resultant metrics, across runs, on different HW profiles.
+This repository is aimed towards providing various Gluster benchmarking
+tests and the result metrics, across runs, on different HW profiles.
 
-The vision of this project is, to provide metrics and guidelines on Gluster
-performance, across workloads and releases, on varying hardware stacks.
+The goal of this project is, to provide metrics and guidelines on Gluster
+performance, across workloads and releases, on different hardware stacks.
 
 The current work is towards providing a set of Gluster performance
 tests, that can be replicated on any hardware or Gluster configuration and, to
-further provide means to publish test results from these hardware configurations
-regularly.
+further provide means to regularly publish test results from these hardware configurations
 
 The intention of starting as above, is to kick-off regular regression runs of
 Gluster, across various supported release milestones, and to report any
