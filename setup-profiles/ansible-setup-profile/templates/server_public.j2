@@ -1,0 +1,8 @@
+---
+glusterip: {{ hostvars[inventory_hostname]['server%s' | format(var)] }}
+
+devices:
+# Generate list of drives
+{% for device in devices.split(',') %}
+  - '/dev/{{ device }}'
+{% endfor %}

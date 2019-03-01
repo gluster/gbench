@@ -1,0 +1,16 @@
+---
+# Common variables for all hosts
+
+ansible_connection: ssh
+ansible_user: root
+
+# Cleanup of devices is allowed on this setup
+gbench_device_cleanup: yes
+
+gbench_client_mountpoint: "/mnt/gbench/"
+# Infiniband (IB) over IP variables
+#ipoib_device: ib0
+#ipoib_netmask: 255.255.255.0
+#ipoib_use_gateway: yes
+#ipoib_gateway: em1
+

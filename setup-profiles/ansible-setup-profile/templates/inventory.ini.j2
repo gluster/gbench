@@ -1,0 +1,23 @@
+[servers]
+{% for host in servers.split(',') %}
+{{ host }}
+{% endfor %}
+
+[clients]
+{% for host in clients.split(',') %}
+{{ host }}
+{% endfor %}
+
+{% for server in servers.split(',') %}
+[server{{ loop.index }}]
+{{ server }}
+
+{% endfor %}
+
+{% for client in clients.split(',') %}
+[client{{ loop.index }}]
+{{ client }}
+
+{% endfor %}
+
+

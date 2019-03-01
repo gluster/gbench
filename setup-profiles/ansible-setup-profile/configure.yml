@@ -1,0 +1,18 @@
+---
+- hosts: localhost
+  tasks:
+
+  # Create exportenv.yml from the src jinja2 file
+  - template:
+      src: templates/exportenv.yml.j2
+      dest: exportenv.yml
+
+  # Create systems file containing servers and clients from the src jinja2 file
+  - template:
+      src: templates/systems.yml.j2
+      dest: systems.yml
+
+  # includes the tasks from exportenv.yml which was created above
+  - include: exportenv.yml
+...
+
