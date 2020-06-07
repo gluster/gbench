@@ -1,0 +1,12 @@
+# Standards: 1.7
+---
+- hosts: servers
+  tasks:
+    - name: Install vim, screen and wget
+      yum:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - vim
+        - screen
+        - wget
